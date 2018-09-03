@@ -3,7 +3,6 @@
 IndexBuffer::IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialData)
 	: indices(initialData)
 {
-
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
 	ibd.ByteWidth = sizeof(unsigned int) * initialData.size();
