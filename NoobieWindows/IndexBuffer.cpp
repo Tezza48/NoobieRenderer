@@ -1,31 +1,33 @@
 #include "IndexBuffer.h"
 
-IndexBuffer::IndexBuffer(Renderer &renderer, unsigned int * initialData, size_t count)
-	: renderer(&renderer), indices(initialData), numIndices(count)
+IndexBuffer::IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialData)
+	: indices(initialData)
 {
 
 	D3D11_BUFFER_DESC ibd;
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(unsigned int) * numIndices;
+	ibd.ByteWidth = sizeof(unsigned int) * initialData.size();
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = NULL;
 	ibd.MiscFlags = NULL;
 	ibd.StructureByteStride = NULL;
 
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = indices;
+	unsigned int * tempData = indices.data();
 
-	D3D_CALL(this->renderer->GetDevice()->CreateBuffer(&ibd, &data, &buffer));
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = indices.data();
+
+	D3D_CALL(renderer.GetDevice()->CreateBuffer(&ibd, &data, &buffer));
 }
 
 
 IndexBuffer::~IndexBuffer()
 {
 	buffer->Release();
-	delete[] indices;
+	buffer = nullptr;
 }
 
-void IndexBuffer::Bind()
+void IndexBuffer::Bind(Renderer & renderer) const
 {
-	renderer->GetContext()->IASetIndexBuffer(buffer, DXGI_FORMAT_R32_UINT, 0);
+	renderer.GetContext()->IASetIndexBuffer(buffer, DXGI_FORMAT_R32_UINT, 0);
 }

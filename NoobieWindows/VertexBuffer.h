@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <vector>
 #include "Renderer.h"
 
 struct Vertex
@@ -14,17 +15,15 @@ struct Vertex
 class VertexBuffer
 {
 private:
-	Renderer * renderer;
-
-	size_t numVertices;
-	Vertex *vertices;
+	std::vector<Vertex> vertices;
 	ID3D11Buffer * buffer;
 
 public:
-	VertexBuffer(Renderer & renderer, Vertex * initialData, size_t count);
+	VertexBuffer() {}
+	VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData);
 	~VertexBuffer();
 
-	void Bind();
+	void Bind(Renderer & renderer) const;
 	//void Unbind();
 };
 

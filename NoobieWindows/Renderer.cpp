@@ -89,6 +89,7 @@ void Renderer::Resize(const Window & window)
 	D3D_CALL(adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory));
 
 	D3D_CALL(factory->CreateSwapChain(device, &sd, &swapChain));
+	factory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER);
 
 	dxgiDevice->Release();
 	adapter->Release();
@@ -109,12 +110,12 @@ void Renderer::Resize(const Window & window)
 	dsd.SampleDesc.Quality = enableMsaa ? msaa4xQuality - 1 : 0;
 	dsd.Usage = D3D11_USAGE_DEFAULT;
 	dsd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	dsd.CPUAccessFlags = NULL;
-	dsd.MiscFlags = NULL;
+	dsd.CPUAccessFlags = 0;
+	dsd.MiscFlags = 0;
 
-	D3D_CALL(device->CreateTexture2D(&dsd, NULL, &depthStencilBuffer));
+	D3D_CALL(device->CreateTexture2D(&dsd, 0, &depthStencilBuffer));
 
-	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, NULL, &depthStencilView));
+	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView));
 
 	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 

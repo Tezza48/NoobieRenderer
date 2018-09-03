@@ -1,21 +1,21 @@
 #pragma once
 #include <d3d11.h>
+#include <vector>
 #include "Renderer.h"
 
 class IndexBuffer
 {
 private:
-	Renderer * renderer;
-	size_t numIndices;
-	unsigned int * indices;
+	std::vector<unsigned int> indices;
 	ID3D11Buffer * buffer;
 
 public:
-	IndexBuffer(Renderer & renderer, unsigned int * initialData, size_t count);
+	IndexBuffer() {}
+	IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialData);
 	~IndexBuffer();
 
-	void Bind();
+	void Bind(Renderer & renderer) const;
 
-	size_t GetNumIndices() const { return numIndices; }
+	unsigned int GetNumIndices() const { return indices.size(); }
 };
 
