@@ -6,8 +6,8 @@
 #include <DirectXColors.h>
 #include <stdio.h>
 #include <comdef.h>
-#include "Window.h"
 #include <tchar.h>
+#include "Window.h"
 
 #define WFILE 
 
@@ -32,7 +32,6 @@ private:
 	ID3D11RenderTargetView * renderTargetView;
 	ID3D11DepthStencilView * depthStencilView;
 
-
 	bool enableMsaa = true;
 	UINT msaa4xQuality;
 private:
@@ -46,7 +45,13 @@ public:
 	void ClearBackBuffer(const float color[4]);
 	void SwapBuffers();
 
+	void DrawIndexed(unsigned int count);
+
 	ID3D11Device * GetDevice() const { return device; }
 	ID3D11DeviceContext * GetContext() const { return context; }
+
+	//void SetInputLayout(InputLayout layout);
+	//void SetShader(Shader shader); // Set all shaders in shader object
+	//void SetPrimitiveTopology(/* Enum for type */);
 };
 

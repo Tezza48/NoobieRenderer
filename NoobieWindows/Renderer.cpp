@@ -15,6 +15,12 @@ void Renderer::SwapBuffers()
 	D3D_CALL(swapChain->Present(0, 0));
 }
 
+// Draw indices assuming starting at 0, 0
+void Renderer::DrawIndexed(unsigned int count)
+{
+	context->DrawIndexed(count, 0, 0);
+}
+
 Renderer::Renderer()
 {
 	
