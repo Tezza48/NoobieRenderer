@@ -1,7 +1,7 @@
-cbuffer perObject
-{
-	float4x4 worldViewProj;
-};
+//cbuffer perObject
+//{
+//	float4x4 worldViewProj;
+//};
 
 struct PixelIn
 {
