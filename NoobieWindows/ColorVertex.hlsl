@@ -1,7 +1,7 @@
-//cbuffer perObject
-//{
-//	float4x4 worldViewProj;
-//};
+cbuffer perObject
+{
+	float4x4 worldViewProj;
+};
 
 struct VertIn
 {
@@ -10,14 +10,14 @@ struct VertIn
 
 struct VertOut
 {
-	float4 pos : SV_POSITION;
+	float4 posH : SV_POSITION;
 };
 
 VertOut main(VertIn input)
 {
 	VertOut output;
 
-	//output.posH = mul(float4(input.pos, 1.0f), worldViewProj);
-	output.pos = float4(input.pos, 1.0f);
+	output.posH = mul(float4(input.pos, 1.0f), worldViewProj);
+	//output.posH = float4(input.pos, 1.0f);
 	return output;
 }

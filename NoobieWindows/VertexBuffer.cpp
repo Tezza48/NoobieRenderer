@@ -1,9 +1,23 @@
 #include "VertexBuffer.h"
 #include <stdio.h>
 
-VertexBuffer::VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData)
-					: vertices(initialData)
+VertexBuffer::VertexBuffer()
 {
+	buffer = nullptr;
+}
+
+VertexBuffer::~VertexBuffer()
+{
+	buffer->Release();
+	buffer = nullptr;
+}
+
+void VertexBuffer::Init(Renderer * renderer, std::vector<Vertex> initialData)
+{
+	// Save the data for use later
+	vertices = initialData;
+
+	// fill out description for the buffer
 	D3D11_BUFFER_DESC vbd;
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof(Vertex) * initialData.size();
@@ -12,18 +26,12 @@ VertexBuffer::VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData)
 	vbd.MiscFlags = NULL;
 	vbd.StructureByteStride = 0;
 
+	// Holds the data in a structure it can use
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = vertices.data();// get the array from the vector
 
-	D3D_CALL(renderer.GetDevice()->CreateBuffer(&vbd, &data, &buffer));
-	printf("Creating VertexBuffer.\n");
-}
-
-VertexBuffer::~VertexBuffer()
-{
-	buffer->Release();
-	buffer = nullptr;
-	printf("Destroying VertexBuffer.\n");
+	// Tell the device to create the buffer
+	D3D_CALL(renderer->GetDevice()->CreateBuffer(&vbd, &data, &buffer));
 }
 
 void VertexBuffer::Bind(Renderer * renderer) const

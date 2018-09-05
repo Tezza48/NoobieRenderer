@@ -12,6 +12,7 @@ struct Vertex
 	//XMFLOAT4 color;
 	////XMFLOAT2 tex0;
 	//XMFLOAT3 normal;
+
 	Vertex(XMFLOAT3 pos) : position(pos) {}
 	Vertex(float x, float y, float z) : position(XMFLOAT3(x, y, z)) {}
 };
@@ -23,9 +24,11 @@ private:
 	ID3D11Buffer * buffer;
 
 public:
-	VertexBuffer() { buffer = nullptr; }
-	VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData);
+	VertexBuffer();
+	//VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData);
 	~VertexBuffer();
+
+	void Init(Renderer * renderer, std::vector<Vertex> initialData);
 
 	void Bind(Renderer * renderer) const;
 	//void Unbind();

@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Content.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Content.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="Renderer.h" />

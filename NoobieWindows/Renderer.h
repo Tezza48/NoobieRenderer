@@ -16,8 +16,6 @@
 	wprintf(L"Error: in file %s at line (%d), hr: %s", _T(__FILE__), __LINE__, err.ErrorMessage());\
 	DebugBreak();}
 
-
-
 class Renderer
 {
 private:
