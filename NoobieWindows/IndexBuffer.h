@@ -10,11 +10,11 @@ private:
 	ID3D11Buffer * buffer;
 
 public:
-	IndexBuffer() {}
+	IndexBuffer() {buffer = nullptr;}
 	IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialData);
 	~IndexBuffer();
 
-	void Bind(Renderer & renderer) const;
+	void Bind(Renderer * renderer) const;
 
 	unsigned int GetNumIndices() const { return indices.size(); }
 };

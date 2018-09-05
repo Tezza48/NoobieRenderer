@@ -1,4 +1,5 @@
 #include "VertexBuffer.h"
+#include <stdio.h>
 
 VertexBuffer::VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData)
 					: vertices(initialData)
@@ -15,17 +16,19 @@ VertexBuffer::VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData)
 	data.pSysMem = vertices.data();// get the array from the vector
 
 	D3D_CALL(renderer.GetDevice()->CreateBuffer(&vbd, &data, &buffer));
+	printf("Creating VertexBuffer.\n");
 }
 
 VertexBuffer::~VertexBuffer()
 {
 	buffer->Release();
 	buffer = nullptr;
+	printf("Destroying VertexBuffer.\n");
 }
 
-void VertexBuffer::Bind(Renderer & renderer) const
+void VertexBuffer::Bind(Renderer * renderer) const
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	renderer.GetContext()->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+	renderer->GetContext()->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 }

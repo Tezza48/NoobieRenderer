@@ -1,4 +1,5 @@
 #include "IndexBuffer.h"
+#include <stdio.h>
 
 IndexBuffer::IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialData)
 	: indices(initialData)
@@ -17,6 +18,7 @@ IndexBuffer::IndexBuffer(Renderer & renderer, std::vector<unsigned int> initialD
 	data.pSysMem = indices.data();
 
 	D3D_CALL(renderer.GetDevice()->CreateBuffer(&ibd, &data, &buffer));
+	printf("Creating IndexBuffer.\n");
 }
 
 
@@ -24,9 +26,10 @@ IndexBuffer::~IndexBuffer()
 {
 	buffer->Release();
 	buffer = nullptr;
+	printf("Destroying IndexBuffer.\n");
 }
 
-void IndexBuffer::Bind(Renderer & renderer) const
+void IndexBuffer::Bind(Renderer * renderer) const
 {
-	renderer.GetContext()->IASetIndexBuffer(buffer, DXGI_FORMAT_R32_UINT, 0);
+	renderer->GetContext()->IASetIndexBuffer(buffer, DXGI_FORMAT_R32_UINT, 0);
 }

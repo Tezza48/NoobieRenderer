@@ -4,12 +4,16 @@
 #include <vector>
 #include "Renderer.h"
 
+using namespace DirectX;
+
 struct Vertex
 {
-	DirectX::XMFLOAT3 position;
+	XMFLOAT3 position;
 	//XMFLOAT4 color;
 	////XMFLOAT2 tex0;
 	//XMFLOAT3 normal;
+	Vertex(XMFLOAT3 pos) : position(pos) {}
+	Vertex(float x, float y, float z) : position(XMFLOAT3(x, y, z)) {}
 };
 
 class VertexBuffer
@@ -19,11 +23,11 @@ private:
 	ID3D11Buffer * buffer;
 
 public:
-	VertexBuffer() {}
+	VertexBuffer() { buffer = nullptr; }
 	VertexBuffer(Renderer & renderer, std::vector<Vertex> initialData);
 	~VertexBuffer();
 
-	void Bind(Renderer & renderer) const;
+	void Bind(Renderer * renderer) const;
 	//void Unbind();
 };
 
