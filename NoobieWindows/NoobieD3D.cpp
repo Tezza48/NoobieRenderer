@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 
+
 NoobieD3D * NoobieD3D::instance = nullptr;
 
 NoobieD3D::NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
@@ -15,7 +16,7 @@ NoobieD3D::NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int
 
 NoobieD3D::~NoobieD3D()
 {
-
+	DestroyWindow(windowHandle);
 }
 
 bool NoobieD3D::Init()
@@ -169,6 +170,12 @@ void NoobieD3D::OnResize()
 	context->RSSetViewports(1, &vp);
 }
 
+void NoobieD3D::ClearBuffers(const float color[4])
+{
+	context->ClearRenderTargetView(renderTargetView.Get(), color);
+	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
 	lastMessage.hwnd = window;
@@ -181,7 +188,7 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	case WM_KEYDOWN:
 		if (wparam == VK_ESCAPE)
 		{
-			DestroyWindow(window);
+			isRunning = false;
 		}
 		return 0;
 	case WM_DESTROY:
@@ -190,12 +197,6 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		return 0;
 	}
 	return DefWindowProc(window, message, wparam, lparam);
-}
-
-void NoobieD3D::ClearBuffers(const float color[4])
-{
-	context->ClearRenderTargetView(renderTargetView.Get(), color);
-	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 LRESULT CALLBACK MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
