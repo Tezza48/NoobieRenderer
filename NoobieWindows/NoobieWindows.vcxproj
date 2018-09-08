@@ -189,10 +189,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="NoobieD3D.cpp" />
-    <ClCompile Include="RasterizerState.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstantBuffer.h" />
@@ -200,27 +197,10 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />
-    <ClInclude Include="RasterizerState.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.shader" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="ColorPixel.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="ColorVertex.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
     <None Include="effect.fx">
       <FileType>Document</FileType>
     </None>

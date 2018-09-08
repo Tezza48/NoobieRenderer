@@ -18,19 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RasterizerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Content.cpp">
@@ -44,19 +35,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RasterizerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Content.h">
@@ -71,21 +53,13 @@
     <ClInclude Include="NoobieApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.shader">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="effect.fx">
       <Filter>Resource Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="ColorVertex.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
-    <FxCompile Include="ColorPixel.hlsl">
-      <Filter>Resource Files</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

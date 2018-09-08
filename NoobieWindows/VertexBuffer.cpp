@@ -3,16 +3,15 @@
 
 VertexBuffer::VertexBuffer()
 {
-	buffer = nullptr;
+
 }
 
 VertexBuffer::~VertexBuffer()
 {
-	buffer->Release();
-	buffer = nullptr;
+
 }
 
-void VertexBuffer::Init(Renderer * renderer, std::vector<Vertex> initialData)
+void VertexBuffer::Init(PtrDevice device, std::vector<Vertex> initialData)
 {
 	// Save the data for use later
 	vertices = initialData;
@@ -31,12 +30,12 @@ void VertexBuffer::Init(Renderer * renderer, std::vector<Vertex> initialData)
 	data.pSysMem = vertices.data();// get the array from the vector
 
 	// Tell the device to create the buffer
-	D3D_CALL(renderer->GetDevice()->CreateBuffer(&vbd, &data, &buffer));
+	D3D_CALL(device->CreateBuffer(&vbd, &data, buffer.GetAddressOf()));
 }
 
-void VertexBuffer::Bind(Renderer * renderer) const
+void VertexBuffer::Bind(PtrContext context) const
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	renderer->GetContext()->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+	context->IASetVertexBuffers(0, 1, buffer.GetAddressOf(), &stride, &offset);
 }

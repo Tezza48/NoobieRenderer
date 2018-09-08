@@ -3,17 +3,17 @@
 
 IndexBuffer::IndexBuffer()
 {
-	buffer = nullptr;
+//	buffer = nullptr;
 }
 
 
 IndexBuffer::~IndexBuffer()
 {
-	buffer->Release();
-	buffer = nullptr;
+	//buffer->Release();
+	//buffer = nullptr;
 }
 
-void IndexBuffer::Init(Renderer * renderer, std::vector<unsigned int> initialData)
+void IndexBuffer::Init(PtrDevice device, std::vector<unsigned int> initialData)
 {
 	// See VertexBuffer.cpp for comments
 	indices = initialData;
@@ -29,10 +29,10 @@ void IndexBuffer::Init(Renderer * renderer, std::vector<unsigned int> initialDat
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = indices.data();
 
-	D3D_CALL(renderer->GetDevice()->CreateBuffer(&ibd, &data, &buffer));
+	D3D_CALL(device->CreateBuffer(&ibd, &data, buffer.GetAddressOf()));
 }
 
-void IndexBuffer::Bind(Renderer * renderer) const
+void IndexBuffer::Bind(PtrContext context) const
 {
-	renderer->GetContext()->IASetIndexBuffer(buffer, DXGI_FORMAT_R32_UINT, 0);
+	context->IASetIndexBuffer(buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 }

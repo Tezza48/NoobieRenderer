@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 
-void Content::LoadOBJ(Renderer * renderer, std::string filename, VertexBuffer & vBuffer, IndexBuffer & iBuffer, float scale)
+void Content::LoadOBJ(PtrDevice device, std::string filename, VertexBuffer & vBuffer, IndexBuffer & iBuffer, float scale)
 {
 	std::ifstream file(filename, std::fstream::in);
 	if (file.is_open())
@@ -60,8 +60,8 @@ void Content::LoadOBJ(Renderer * renderer, std::string filename, VertexBuffer & 
 
 		}
 
-		vBuffer.Init(renderer, vertices);
-		iBuffer.Init(renderer, indices);
+		vBuffer.Init(device, vertices);
+		iBuffer.Init(device, indices);
 
 		file.close();
 

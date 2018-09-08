@@ -20,11 +20,19 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-	Renderable Bunny;
-	ComPtr<ID3DX11Effect> effect;
-	ComPtr<ID3DX11EffectTechnique> currentTech;
+	Renderable bunny;
+	
+	ComPtr<ID3DX11Effect> effect = NULL;
+	ComPtr<ID3DX11EffectTechnique> currentTech = NULL;
+	ID3DX11EffectMatrixVariable * fxWVP = nullptr;
+
+	ComPtr<ID3D11InputLayout> inputLayout = NULL;
+
+	XMMATRIX view, proj;
+
 public:
-	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight) : NoobieD3D(windowTitle, windowWidth, windowHeight) {};
+	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
+		: NoobieD3D(windowTitle, windowWidth, windowHeight) {};
 	~NoobieApp();
 
 

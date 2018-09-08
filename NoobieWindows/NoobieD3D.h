@@ -1,16 +1,9 @@
 #pragma once
 #include <d3d11.h>
 #include <stdio.h>
-#include <comdef.h>
 #include <string>
-#include <tchar.h>
 #include <memory>
-#include "Window.h"
-
-#define D3D_CALL(x) if(FAILED(x)){\
-	_com_error err(x);\
-	wprintf(L"Error: in file %s at line (%d), hr: %s", _T(__FILE__), __LINE__, err.ErrorMessage());\
-	DebugBreak();}
+#include "Utilities.h"
 
 using std::wstring;
 using std::unique_ptr;
@@ -32,13 +25,13 @@ protected:
 	MSG lastMessage;
 
 	// D3D information
-	ID3D11Device * device;
-	ID3D11DeviceContext * context;
+	PtrDevice device;
+	PtrContext context;
 
-	IDXGISwapChain * swapChain;
+	PtrSwapChain swapChain;
 
-	ID3D11RenderTargetView * renderTargetView;
-	ID3D11DepthStencilView * depthStencilView;
+	PtrRenderTargetView renderTargetView;
+	PtrDepthStencilView depthStencilView;
 
 	bool enableMsaa = true;
 	UINT msaa4xQuality;
@@ -56,6 +49,7 @@ public:
 	LRESULT CALLBACK WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam);
 
 	static NoobieD3D * GetInstance() { return instance; };
+	float GetAspectRatio() const { return static_cast<float>(windowWidth) / static_cast<float>(windowHeight); }
 protected:
 
 	void ClearBuffers(const float color[4]);

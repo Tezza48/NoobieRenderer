@@ -1,9 +1,9 @@
 #pragma once
-#include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Utilities.h"
 
 namespace Content
 {
-	void LoadOBJ(Renderer * renderer, std::string filename, VertexBuffer & vBuffer, IndexBuffer & iBuffer, float scale = 1.0f);
+	void LoadOBJ(PtrDevice device, std::string filename, VertexBuffer & vBuffer, IndexBuffer & iBuffer, float scale = 1.0f);
 }
