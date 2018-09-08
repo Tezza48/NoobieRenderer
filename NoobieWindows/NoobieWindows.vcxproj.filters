@@ -36,6 +36,12 @@
     <ClCompile Include="Content.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NoobieD3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NoobieApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -56,9 +62,21 @@
     <ClInclude Include="Content.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoobieD3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoobieApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="effect.fx">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

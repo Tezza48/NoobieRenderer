@@ -4,8 +4,6 @@
 
 void Renderer::ClearBackBuffer(const float color[4])
 {
-	assert(context);
-	assert(swapChain);
 	context->ClearRenderTargetView(renderTargetView, color);
 	context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
@@ -29,7 +27,6 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	depthStencilBuffer->Release();
 	depthStencilView->Release();
 	renderTargetView->Release();
 
@@ -60,7 +57,7 @@ void Renderer::Init(const Window & window)
 			 &context));
 
 	D3D_CALL(device->CheckMultisampleQualityLevels(
-		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &msaa4xQuality));
+		DXGI_FORMAT_R8G8B8A8_UNORM, 8, &msaa4xQuality));
 	assert(msaa4xQuality > 0);
 
 	Resize(window);
@@ -102,8 +99,8 @@ void Renderer::Resize(const Window & window)
 	factory->Release();
 
 	ID3D11Texture2D * backBuffer;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-	device->CreateRenderTargetView(backBuffer, 0, &renderTargetView);
+	D3D_CALL(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
+	D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
 	backBuffer->Release();
 
 	D3D11_TEXTURE2D_DESC dsd;
@@ -119,9 +116,10 @@ void Renderer::Resize(const Window & window)
 	dsd.CPUAccessFlags = 0;
 	dsd.MiscFlags = 0;
 
+	ID3D11Texture2D * depthStencilBuffer;
 	D3D_CALL(device->CreateTexture2D(&dsd, 0, &depthStencilBuffer));
-
 	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView));
+	depthStencilBuffer->Release();
 
 	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 

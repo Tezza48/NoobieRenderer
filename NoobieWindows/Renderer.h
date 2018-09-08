@@ -9,8 +9,6 @@
 #include <tchar.h>
 #include "Window.h"
 
-#define WFILE 
-
 #define D3D_CALL(x) if(FAILED(x)){\
 	_com_error err(x);\
 	wprintf(L"Error: in file %s at line (%d), hr: %s", _T(__FILE__), __LINE__, err.ErrorMessage());\
@@ -24,8 +22,6 @@ private:
 	ID3D11DeviceContext * context;
 
 	IDXGISwapChain * swapChain;
-
-	ID3D11Texture2D * depthStencilBuffer;
 
 	ID3D11RenderTargetView * renderTargetView;
 	ID3D11DepthStencilView * depthStencilView;
