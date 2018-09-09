@@ -4,16 +4,26 @@
 #include <DirectXMath.h>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include <wrl.h>
+#include "Utilities.h"
+#include "Effect.h"
 
+using namespace Noobie;
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 struct Renderable
 {
 	XMVECTOR position;
+	float rotation;
 	VertexBuffer vb;
 	IndexBuffer ib;
+};
+
+struct Camera
+{
+	XMVECTOR eyePos;
+	XMMATRIX view;
+	XMMATRIX projection;
 };
 
 class NoobieApp :
@@ -22,11 +32,7 @@ class NoobieApp :
 private:
 	Renderable bunny;
 	
-	ComPtr<ID3DX11Effect> effect = NULL;
-	ComPtr<ID3DX11EffectTechnique> currentTech = NULL;
-	ID3DX11EffectMatrixVariable * fxWVP = nullptr;
-
-	ComPtr<ID3D11InputLayout> inputLayout = NULL;
+	Effect effect;
 
 	XMMATRIX view, proj;
 
@@ -35,10 +41,9 @@ public:
 		: NoobieD3D(windowTitle, windowWidth, windowHeight) {};
 	~NoobieApp();
 
-
 private:
 	void Start() override;
-	void Update() override;
-	void Draw() override;
+	void Update(float dt) override;
+	void Draw(float dt) override;
 };
 
