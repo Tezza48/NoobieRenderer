@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 
+using namespace Noobie;
 
 NoobieD3D * NoobieD3D::instance = nullptr;
 
@@ -79,14 +80,11 @@ bool NoobieD3D::Init()
 }
 
 // dirty FPS averager
-static float QueueAverage(std::queue<float> & queue, unsigned int max = 100)
+static float QueueAverage(std::queue<float> & queue, unsigned int max = 10)
 {
-	if (queue.size() > max)
+	while (max < queue.size())
 	{
-		for (size_t i = 0; i < max - queue.size(); i++)
-		{
-			queue.pop();
-		}
+		queue.pop();
 	}
 	float counter = 0;
 	for (size_t i = 0; i < queue.size(); i++)
@@ -120,7 +118,7 @@ void NoobieD3D::Run()
 
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
-			printf("\r Frame Time: %.2f FPS: %.0f", frameDuration.count(), QueueAverage(fpsQueue));
+			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), QueueAverage(fpsQueue));
 			D3D_CALL(swapChain->Present(0, 0));
 		}
 	}
@@ -227,7 +225,7 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	return DefWindowProc(window, message, wparam, lparam);
 }
 
-LRESULT CALLBACK MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK Noobie::MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
 	return NoobieD3D::GetInstance()->WindowProc(window, message, wparam, lparam);
 }

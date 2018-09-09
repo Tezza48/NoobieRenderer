@@ -11,14 +11,12 @@
 	DebugBreak();\
 	}
 
-using Microsoft::WRL::ComPtr;
-
-typedef ComPtr<ID3D11Device> PtrDevice;
-typedef ComPtr<ID3D11DeviceContext> PtrContext;
-typedef ComPtr<ID3D11Buffer> PtrBuffer;
-typedef ComPtr<ID3D11InputLayout> PtrInputLayout;
-typedef ComPtr<ID3D11RenderTargetView> PtrRenderTargetView;
-typedef ComPtr<ID3D11DepthStencilView> PtrDepthStencilView;
+typedef Microsoft::WRL::ComPtr<ID3D11Device> PtrDevice;
+typedef Microsoft::WRL::ComPtr<ID3D11DeviceContext> PtrContext;
+typedef Microsoft::WRL::ComPtr<ID3D11Buffer> PtrBuffer;
+typedef Microsoft::WRL::ComPtr<ID3D11InputLayout> PtrInputLayout;
+typedef Microsoft::WRL::ComPtr<ID3D11RenderTargetView> PtrRenderTargetView;
+typedef Microsoft::WRL::ComPtr<ID3D11DepthStencilView> PtrDepthStencilView;
 
 
-typedef ComPtr<IDXGISwapChain> PtrSwapChain;
+typedef Microsoft::WRL::ComPtr<IDXGISwapChain> PtrSwapChain;

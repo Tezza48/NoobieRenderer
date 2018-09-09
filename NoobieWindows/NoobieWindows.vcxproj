@@ -185,6 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Content.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
@@ -192,8 +193,8 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="Content.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />

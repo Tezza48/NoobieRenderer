@@ -5,7 +5,9 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Utilities.h"
+#include "Effect.h"
 
+using namespace Noobie;
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
@@ -30,11 +32,7 @@ class NoobieApp :
 private:
 	Renderable bunny;
 	
-	ComPtr<ID3DX11Effect> effect = NULL;
-	ComPtr<ID3DX11EffectTechnique> currentTech = NULL;
-	ID3DX11EffectMatrixVariable * fxWVP = nullptr;
-
-	ComPtr<ID3D11InputLayout> inputLayout = NULL;
+	Effect effect;
 
 	XMMATRIX view, proj;
 
