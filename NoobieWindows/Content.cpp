@@ -54,10 +54,27 @@ void Content::LoadOBJ(PtrDevice device, std::string filename, VertexBuffer & vBu
 
 			XMVECTOR faceNormal = XMVector3Normalize(XMVector3Cross(lhs, rhs));
 
-			XMStoreFloat3(&vertices[faceVert[0]].normal, faceNormal);
-			XMStoreFloat3(&vertices[faceVert[1]].normal, faceNormal);
-			XMStoreFloat3(&vertices[faceVert[2]].normal, faceNormal);
 
+			// Get the average of the new normal with the existing normal on the point
+			// so that the normal at each vertex is the average of all faces it's used in
+			XMFLOAT3 newNormal;
+			XMStoreFloat3(&newNormal, faceNormal);
+			for (size_t vertI = 0; vertI < 3; vertI++)
+			{
+				if (vertices[faceVert[vertI]].normal.x != 0 || vertices[faceVert[vertI]].normal.y != 0 || vertices[faceVert[vertI]].normal.z != 0)
+				{
+					vertices[faceVert[vertI]].normal.x += newNormal.x;
+					vertices[faceVert[vertI]].normal.y += newNormal.y;
+					vertices[faceVert[vertI]].normal.z += newNormal.z;
+					vertices[faceVert[vertI]].normal.x /= 2.0f;
+					vertices[faceVert[vertI]].normal.y /= 2.0f;
+					vertices[faceVert[vertI]].normal.z /= 2.0f;
+				}
+				else
+				{
+					vertices[faceVert[vertI]].normal = newNormal;
+				}
+			}
 		}
 
 		vBuffer.Init(device, vertices);
