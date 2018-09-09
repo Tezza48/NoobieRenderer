@@ -78,21 +78,49 @@ bool NoobieD3D::Init()
 	return true;
 }
 
+// dirty FPS averager
+static float QueueAverage(std::queue<float> & queue, unsigned int max = 100)
+{
+	if (queue.size() > max)
+	{
+		for (size_t i = 0; i < max - queue.size(); i++)
+		{
+			queue.pop();
+		}
+	}
+	float counter = 0;
+	for (size_t i = 0; i < queue.size(); i++)
+		counter += queue._Get_container()[i];
+
+	return counter / queue.size();
+}
+
 void NoobieD3D::Run()
 {
 	Start();
 	isRunning = true;
+
+	lastTime = high_resolution_clock::now();
+	std::queue<float> fpsQueue;
+
 	while (isRunning)
 	{
-		if (PeekMessage(&lastMessage, 0, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 		{
-			TranslateMessage(&lastMessage);
-			DispatchMessage(&lastMessage);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 		else
 		{
-			Update();
-			Draw();
+			auto newTime = high_resolution_clock::now();
+			duration<float> frameDuration = newTime - lastTime;
+			lastTime = newTime;
+
+			fpsQueue.emplace(1.0f / frameDuration.count());
+
+			Update(frameDuration.count());
+			Draw(frameDuration.count());
+			printf("\r Frame Time: %.2f FPS: %.0f", frameDuration.count(), QueueAverage(fpsQueue));
 			D3D_CALL(swapChain->Present(0, 0));
 		}
 	}
@@ -178,10 +206,10 @@ void NoobieD3D::ClearBuffers(const float color[4])
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
-	lastMessage.hwnd = window;
-	lastMessage.message = message;
-	lastMessage.wParam = wparam;
-	lastMessage.lParam = lparam;
+	msg.hwnd = window;
+	msg.message = message;
+	msg.wParam = wparam;
+	msg.lParam = lparam;
 
 	switch (message)
 	{

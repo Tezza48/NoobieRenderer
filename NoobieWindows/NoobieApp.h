@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include <wrl.h>
+#include "Utilities.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -12,8 +12,16 @@ using Microsoft::WRL::ComPtr;
 struct Renderable
 {
 	XMVECTOR position;
+	float rotation;
 	VertexBuffer vb;
 	IndexBuffer ib;
+};
+
+struct Camera
+{
+	XMVECTOR eyePos;
+	XMMATRIX view;
+	XMMATRIX projection;
 };
 
 class NoobieApp :
@@ -35,10 +43,9 @@ public:
 		: NoobieD3D(windowTitle, windowWidth, windowHeight) {};
 	~NoobieApp();
 
-
 private:
 	void Start() override;
-	void Update() override;
-	void Draw() override;
+	void Update(float dt) override;
+	void Draw(float dt) override;
 };
 

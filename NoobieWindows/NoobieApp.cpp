@@ -34,8 +34,7 @@ void NoobieApp::Start()
 
 	// Initialize Other data
 
-	bunny.position = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-
+	bunny.position = XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f);
 	XMVECTOR eyePos = XMVectorSet(0.0f, 0.0f, -3.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
@@ -45,15 +44,15 @@ void NoobieApp::Start()
 
 }
 
-void NoobieApp::Update()
+void NoobieApp::Update(float dt)
 {
-	
+	bunny.rotation += dt;
 }
 
-void NoobieApp::Draw()
+void NoobieApp::Draw(float dt)
 {
 	ClearBuffers(DirectX::Colors::CornflowerBlue);
-	XMMATRIX wvp = XMMatrixTranslationFromVector(bunny.position) * view * proj;
+	XMMATRIX wvp = XMMatrixTranslationFromVector(bunny.position) * XMMatrixRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f), bunny.rotation) * view * proj;
 	fxWVP->SetMatrix(reinterpret_cast<float *>(&wvp));
 
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
