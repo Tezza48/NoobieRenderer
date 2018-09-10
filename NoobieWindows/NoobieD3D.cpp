@@ -211,6 +211,15 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 
 	switch (message)
 	{
+	case WM_SIZE:
+		if (isRunning)
+		{
+			windowWidth = LOWORD(lparam);
+			windowHeight = HIWORD(lparam);
+
+			OnResize();
+		}
+		return 0;
 	case WM_KEYDOWN:
 		if (wparam == VK_ESCAPE)
 		{

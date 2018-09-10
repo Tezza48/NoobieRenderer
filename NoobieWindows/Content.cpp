@@ -1,5 +1,4 @@
 #include "Content.h"
-
 #include <fstream>
 #include <string>
 #include <sstream>

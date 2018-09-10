@@ -3,16 +3,10 @@
 #include <DirectXMath.h>
 #include <vector>
 #include "Utilities.h"
+#include "Vertex.h"
 
 using namespace DirectX;
 using std::vector;
-
-struct Vertex
-{
-	XMFLOAT3 position;
-	XMFLOAT4 color;
-	XMFLOAT3 normal;
-};
 
 class VertexBuffer
 {
