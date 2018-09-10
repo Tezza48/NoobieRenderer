@@ -31,7 +31,7 @@ public:
 	virtual ~Effect();
 
 	void Init(PtrDevice device);
-	void Bind(PtrContext context);
+	void Bind(PtrDevice device, PtrContext context);
 
 	//void Draw();
 

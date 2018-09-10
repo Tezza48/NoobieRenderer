@@ -25,7 +25,7 @@ void Effect::Init(PtrDevice device)
 	cbPerObject.worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
 }
 
-void Effect::Bind(PtrContext context)
+void Effect::Bind(PtrDevice device, PtrContext context)
 {
 	if (inputLayout == NULL)
 	{
@@ -37,8 +37,6 @@ void Effect::Bind(PtrContext context)
 
 		D3DX11_PASS_DESC passDesc;
 		currentTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
-		ID3D11Device * device;
-		context->GetDevice(&device);
 		device->CreateInputLayout(desc, 3, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, inputLayout.GetAddressOf());
 	}
 

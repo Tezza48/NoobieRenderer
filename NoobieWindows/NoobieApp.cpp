@@ -51,7 +51,7 @@ void NoobieApp::Draw(float dt)
 	effect.SetMatrix(effect.GetCBPerObject().worldViewProj, &wvp);
 
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	effect.Bind(context);
+	effect.Bind(device, context);
 
 	terrain.Bind(context);
 	//bunny.vb.Bind(context);
