@@ -16,13 +16,13 @@ private:
 
 	unsigned int size;// width and height in quads
 private:
-	void GenMesh();
+	void GenMesh(float * heightmap);
 public:
 	Terrain() {};
 	Terrain(unsigned int size) : size(size) { assert(size > 1); };
 	~Terrain();
 
-	void Init(PtrDevice device);
+	void Init(PtrDevice device, float * heightmap);
 
 	void Bind(PtrContext context);
 

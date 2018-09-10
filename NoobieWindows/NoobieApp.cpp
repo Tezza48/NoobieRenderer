@@ -17,8 +17,18 @@ NoobieApp::~NoobieApp()
 void NoobieApp::Start()
 {
 	//Content::LoadOBJ(device, "res/model/bunny.obj", bunny.vb, bunny.ib, 10.0f);
+	vector<float> heightmap;
+	heightmap.reserve(50 * 50);
 
-	terrain.Init(device);
+	for (size_t y = 0; y < 50; y++)
+	{
+		for (size_t x = 0; x < 50; x++)
+		{
+			heightmap.emplace_back((sin(x / 25.0f * 4) + cos(y / 25.0f * 4)) * 5.0f);
+		}
+	}
+
+	terrain.Init(device, heightmap.data());
 
 	effect.Init(device);
 	effect.SetTechnique("TerrainTech");

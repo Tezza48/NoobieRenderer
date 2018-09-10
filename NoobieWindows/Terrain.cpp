@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-void Terrain::GenMesh()
+void Terrain::GenMesh(float * heightmap)
 {
 	// wrote algorithm in Monogame implementation at https://github.com/Tezza48/Monogame_TerrainGeneration
 	vertices.resize(size * size);
@@ -17,7 +17,7 @@ void Terrain::GenMesh()
 			float offset = static_cast<float>(size - 1) / 2.0f;
 			vertices[y * size + x].position = XMFLOAT3(
 				xf - offset,
-				(sin(x/offset * 4) + cos(y/ offset * 4)) * 5.0f,
+				heightmap[y * size + x],
 				yf - offset);
 
 			vertices[y * size + x].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
@@ -77,9 +77,9 @@ Terrain::~Terrain()
 {
 }
 
-void Terrain::Init(PtrDevice device)
+void Terrain::Init(PtrDevice device, float * heightmap)
 {
-	GenMesh();
+	GenMesh(heightmap);
 
 	// vertex Buffer
 	D3D11_BUFFER_DESC vbd;
