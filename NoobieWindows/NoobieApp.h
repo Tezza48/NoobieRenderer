@@ -12,10 +12,27 @@ using namespace Noobie;
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-struct Renderable
+//struct Entity
+//{
+//	
+//};
+//
+//class Behaviour
+//{
+//public:
+//	Behaviour();
+//	virtual ~Behaviour();
+//};
+
+struct Transform
 {
-	XMVECTOR position;
-	float rotation;
+	XMFLOAT3 position;
+	XMFLOAT4 rotation;
+	float scale = 10.0f;
+};
+
+struct Mesh
+{
 	VertexBuffer vb;
 	IndexBuffer ib;
 };
@@ -24,12 +41,15 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-	//Renderable bunny;
+	Mesh bunny;
+	Transform bunnyTransform;
+	
 	Terrain terrain;
+	Transform terrainTransform;
 	
 	Effect effect;
 
-	float camTimer = 0;
+	float accTime = 0;
 
 	XMMATRIX view, proj;
 

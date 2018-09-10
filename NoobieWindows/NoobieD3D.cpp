@@ -97,6 +97,7 @@ void NoobieD3D::Run()
 {
 	Start();
 	isRunning = true;
+	OnResize();
 
 	lastTime = high_resolution_clock::now();
 	std::queue<float> fpsQueue;
@@ -212,11 +213,10 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	switch (message)
 	{
 	case WM_SIZE:
+		windowWidth = LOWORD(lparam);
+		windowHeight = HIWORD(lparam);
 		if (isRunning)
 		{
-			windowWidth = LOWORD(lparam);
-			windowHeight = HIWORD(lparam);
-
 			OnResize();
 		}
 		return 0;

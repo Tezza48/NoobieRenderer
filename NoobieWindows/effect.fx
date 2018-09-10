@@ -101,6 +101,8 @@ technique11 NormalTech
 	{
 		SetVertexShader(CompileShader(vs_5_0, VSNormal()));
 		SetPixelShader(CompileShader(ps_5_0, PSNormal()));
+
+		SetRasterizerState(Default);
 	}
 }
 

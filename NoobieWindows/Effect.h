@@ -41,6 +41,6 @@ public:
 
 	// Setters
 	void SetMatrix(PtrEffectMatVar targetMat, XMMATRIX * value);
-	void SetTechnique(string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); }
+	PtrEffectTechnique SetTechnique(string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); return currentTechnique; }
 };
 
