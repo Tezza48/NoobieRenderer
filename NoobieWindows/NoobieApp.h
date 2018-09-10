@@ -6,6 +6,7 @@
 #include "IndexBuffer.h"
 #include "Utilities.h"
 #include "Effect.h"
+#include "Terrain.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -19,26 +20,21 @@ struct Renderable
 	IndexBuffer ib;
 };
 
-struct Camera
-{
-	XMVECTOR eyePos;
-	XMMATRIX view;
-	XMMATRIX projection;
-};
-
 class NoobieApp :
 	public NoobieD3D
 {
 private:
-	Renderable bunny;
+	//Renderable bunny;
+	Terrain terrain;
 	
 	Effect effect;
+
+	float camTimer = 0;
 
 	XMMATRIX view, proj;
 
 public:
-	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
-		: NoobieD3D(windowTitle, windowWidth, windowHeight) {};
+	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 	~NoobieApp();
 
 private:

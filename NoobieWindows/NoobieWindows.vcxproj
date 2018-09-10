@@ -184,21 +184,26 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Array2D.cpp" />
     <ClCompile Include="Content.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="NoobieD3D.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Array2D.h" />
     <ClInclude Include="Content.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Utilities.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>

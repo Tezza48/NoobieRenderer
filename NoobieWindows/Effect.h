@@ -2,7 +2,9 @@
 #include <d3dx11effect.h>
 #include "Utilities.h"
 #include "VertexBuffer.h"
+#include <string>
 
+using std::string;
 using Microsoft::WRL::ComPtr;
 
 typedef ComPtr<ID3DX11Effect> PtrEffect;
@@ -39,5 +41,6 @@ public:
 
 	// Setters
 	void SetMatrix(PtrEffectMatVar targetMat, XMMATRIX * value);
+	void SetTechnique(string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); }
 };
 

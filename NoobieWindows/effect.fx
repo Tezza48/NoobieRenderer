@@ -25,6 +25,7 @@ VertexOut VSColor(VertexIn i)
 	o.posH = mul(float4(i.pos, 1.0f), worldViewProj);
 
 	o.color = i.color;
+	o.normal = i.normal;
 
 	return o;
 }
@@ -53,15 +54,46 @@ float4 PSNormal(VertexOut i) : SV_TARGET
 	return float4(i.normal / 2.0f + 0.5f, 1.0f);
 }
 
+// WireFrame
+
+VertexOut VSWire(VertexIn i)
+{
+	VertexOut o;
+
+	o.posH = mul(float4(i.pos, 1.0f), worldViewProj);
+
+	o.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	o.normal = i.normal;
+
+	return o;
+}
+
+float4 PSWire(VertexOut i) : SV_TARGET
+{
+	return i.color;
+}
+
 technique11 ColorTech
 {
 	pass p0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VSColor()));
 		SetPixelShader(CompileShader(ps_5_0, PSColor()));
-
 	}
 }
+
+RasterizerState Default
+{
+	FillMode = Solid;
+	CullMode = Back;
+	FrontCounterClockwise = false;
+};
+RasterizerState WireframeNoCull
+{
+	FillMode = Wireframe;
+	CullMode = None;
+	FrontCounterClockwise = false;
+};
 
 technique11 NormalTech
 {
@@ -70,4 +102,22 @@ technique11 NormalTech
 		SetVertexShader(CompileShader(vs_5_0, VSNormal()));
 		SetPixelShader(CompileShader(ps_5_0, PSNormal()));
 	}
+}
+
+technique11 TerrainTech
+{
+	pass p0
+	{
+		SetVertexShader(CompileShader(vs_5_0, VSColor()));
+		SetPixelShader(CompileShader(ps_5_0, PSColor()));
+
+		SetRasterizerState(Default);
+	}
+	//pass p1
+	//{
+	//	SetVertexShader(CompileShader(vs_5_0, VSWire()));
+	//	SetPixelShader(CompileShader(ps_5_0, PSWire()));
+
+	//	SetRasterizerState(WireframeNoCull);
+	//}
 }
