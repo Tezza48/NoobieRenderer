@@ -24,7 +24,7 @@ void NoobieApp::Start()
 	effect.SetTechnique("TerrainTech");
 
 	//bunny.position = XMVectorSet(0.0f, -1.0f, 0.0f, 1.0f);
-	XMVECTOR eyePos = XMVectorSet(0.0f, 20.0f, -30.0f, 1.0f);
+	XMVECTOR eyePos = XMVectorSet(0.0f, 30.0f, -50.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	

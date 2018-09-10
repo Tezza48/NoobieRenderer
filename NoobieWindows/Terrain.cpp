@@ -1,6 +1,6 @@
 #include "Terrain.h"
 
-
+#include <math.h>
 
 void Terrain::GenMesh()
 {
@@ -15,7 +15,11 @@ void Terrain::GenMesh()
 			float xf = static_cast<float>(x);
 			float yf = static_cast<float>(y);
 			float offset = static_cast<float>(size - 1) / 2.0f;
-			vertices[y * size + x].position = XMFLOAT3(xf - offset, 0.0f, yf - offset);
+			vertices[y * size + x].position = XMFLOAT3(
+				xf - offset,
+				(sin(x/offset * 4) + cos(y/ offset * 4)) * 5.0f,
+				yf - offset);
+
 			vertices[y * size + x].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 			
 			//printf("v %f %f %f\n", vertices[y * size + x].position.x, vertices[y * size + x].position.y, vertices[y * size + x].position.z);
@@ -39,6 +43,29 @@ void Terrain::GenMesh()
 			lastVert ++;
 		}
 	}
+	// Generate normals for verts not on the edge
+	for (size_t y = 1; y < size - 1; y++)
+	{
+		for (size_t x = 1; x < size - 1; x++)
+		{
+			XMVECTOR vertPos = XMLoadFloat3(&vertices[y * size + x].position);
+			XMVECTOR neighbours[4] = {
+				vertPos - XMLoadFloat3(&vertices[(y + 1) * size + (x + 0)].position),
+				vertPos - XMLoadFloat3(&vertices[(y + 0) * size + (x + 1)].position),
+				vertPos - XMLoadFloat3(&vertices[(y - 1) * size + (x + 0)].position),
+				vertPos - XMLoadFloat3(&vertices[(y + 0) * size + (x - 1)].position)
+			};
+
+			XMVECTOR normals[2] = {
+				XMVector3Normalize(XMVector3Cross(neighbours[0], neighbours[1])),
+				XMVector3Normalize(XMVector3Cross(neighbours[2], neighbours[3])),
+			};
+
+			XMVECTOR avgNormal = (normals[0] + normals[1]) / 2.0f;
+			XMStoreFloat3(&vertices[y * size + x].normal, XMVector3Normalize(avgNormal));
+		}
+	}
+
 	//for (size_t i = 0; i < indices.size(); i+=3)
 	//{
 	//	printf("f %u %u %u\n", indices[i], indices[i+1], indices[i+2]);

@@ -51,7 +51,7 @@ VertexOut VSNormal(VertexIn i)
 
 float4 PSNormal(VertexOut i) : SV_TARGET
 {
-	return float4(i.normal / 2.0f + 0.5f, 1.0f);
+	return float4(i.normal.xzy, 1.0f);
 }
 
 // WireFrame
@@ -70,7 +70,7 @@ VertexOut VSWire(VertexIn i)
 
 float4 PSWire(VertexOut i) : SV_TARGET
 {
-	return i.color;
+	return float4(-i.color.xyz, 1.0f);
 }
 
 technique11 ColorTech
@@ -108,16 +108,16 @@ technique11 TerrainTech
 {
 	pass p0
 	{
-		SetVertexShader(CompileShader(vs_5_0, VSColor()));
-		SetPixelShader(CompileShader(ps_5_0, PSColor()));
+		SetVertexShader(CompileShader(vs_5_0, VSNormal()));
+		SetPixelShader(CompileShader(ps_5_0, PSNormal()));
 
 		SetRasterizerState(Default);
 	}
-	//pass p1
-	//{
-	//	SetVertexShader(CompileShader(vs_5_0, VSWire()));
-	//	SetPixelShader(CompileShader(ps_5_0, PSWire()));
+	pass p1
+	{
+		SetVertexShader(CompileShader(vs_5_0, VSWire()));
+		SetPixelShader(CompileShader(ps_5_0, PSWire()));
 
-	//	SetRasterizerState(WireframeNoCull);
-	//}
+		SetRasterizerState(WireframeNoCull);
+	}
 }
