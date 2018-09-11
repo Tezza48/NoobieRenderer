@@ -79,20 +79,6 @@ bool NoobieD3D::Init()
 	return true;
 }
 
-// dirty FPS averager
-static float QueueAverage(std::queue<float> & queue, unsigned int max = 10)
-{
-	while (max < queue.size())
-	{
-		queue.pop();
-	}
-	float counter = 0;
-	for (size_t i = 0; i < queue.size(); i++)
-		counter += queue._Get_container()[i];
-
-	return counter / queue.size();
-}
-
 void NoobieD3D::Run()
 {
 	Start();
@@ -101,6 +87,15 @@ void NoobieD3D::Run()
 
 	lastTime = high_resolution_clock::now();
 	std::queue<float> fpsQueue;
+
+	auto FPSAverage = [&fpsQueue](unsigned int max) -> float {
+		while (max < fpsQueue.size())
+			fpsQueue.pop();
+		float counter = 0;
+		for (size_t i = 0; i < fpsQueue.size(); i++)
+			counter += fpsQueue._Get_container()[i];
+		return counter / fpsQueue.size();
+	};
 
 	while (isRunning)
 	{
@@ -119,7 +114,7 @@ void NoobieD3D::Run()
 
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
-			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), QueueAverage(fpsQueue));
+			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), FPSAverage(10));
 			D3D_CALL(swapChain->Present(0, 0));
 		}
 	}
