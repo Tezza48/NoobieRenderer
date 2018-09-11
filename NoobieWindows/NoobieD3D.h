@@ -6,6 +6,7 @@
 #include "Utilities.h"
 #include <chrono>
 #include <queue>
+#include "Input.h"
 
 using std::wstring;
 using std::unique_ptr;
@@ -42,6 +43,9 @@ namespace Noobie
 
 		bool enableMsaa = true;
 		UINT msaa4xQuality;
+		
+		// Game Stuff
+		Input input;
 	public:
 		NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 		virtual ~NoobieD3D();
@@ -60,5 +64,7 @@ namespace Noobie
 		virtual void Update(float dt) = 0;
 		virtual void Draw(float dt) = 0;
 		virtual void OnResize();
+
+		void Quit() { isRunning = false; }
 	};
 }

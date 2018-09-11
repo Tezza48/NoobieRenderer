@@ -116,6 +116,7 @@ void NoobieD3D::Run()
 			Draw(frameDuration.count());
 			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), FPSAverage(10));
 			D3D_CALL(swapChain->Present(0, 0));
+			input.SwapAndClearKeyboard();
 		}
 	}
 }
@@ -216,10 +217,10 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		}
 		return 0;
 	case WM_KEYDOWN:
-		if (wparam == VK_ESCAPE)
-		{
-			isRunning = false;
-		}
+		input.WndProcKeyPresed(static_cast<Input::KB>(wparam));
+		return 0;
+	case WM_KEYUP:
+		input.WndProcKeyReleased(static_cast<Input::KB>(wparam));
 		return 0;
 	case WM_DESTROY:
 		isRunning = false;

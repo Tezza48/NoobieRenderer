@@ -47,6 +47,11 @@ void NoobieApp::Start()
 
 void NoobieApp::Update(float dt)
 {
+	if (input.GetCurrentKBState()[Input::KB_ESCAPE])
+	{
+		Quit();
+		return;
+	}
 	accTime +=dt;
 	XMVECTOR eyePos = XMVectorSet(0.0f, sin(accTime) * 20.0f, -30.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
