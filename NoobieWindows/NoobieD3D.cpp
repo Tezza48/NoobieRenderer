@@ -1,5 +1,5 @@
 #include "NoobieD3D.h"
-
+#include <thread>
 #include "Utilities.h"
 
 using namespace Noobie;
@@ -92,9 +92,9 @@ void NoobieD3D::Run()
 		while (max < fpsQueue.size())
 			fpsQueue.pop();
 		float counter = 0;
-		for (size_t i = 0; i < fpsQueue.size(); i++)
+		for (auto i = 0UL; i < fpsQueue.size(); i++)
 			counter += fpsQueue._Get_container()[i];
-		return counter / fpsQueue.size();
+		return counter / fpsQueue.size() - 1;
 	};
 
 	while (isRunning)
@@ -112,11 +112,10 @@ void NoobieD3D::Run()
 
 			fpsQueue.emplace(1.0f / frameDuration.count());
 
+			input.Update();
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
-			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), FPSAverage(10));
 			D3D_CALL(swapChain->Present(0, 0));
-			input.SwapAndClearKeyboard();
 		}
 	}
 }
@@ -217,10 +216,20 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		}
 		return 0;
 	case WM_KEYDOWN:
-		input.WndProcKeyPresed(static_cast<Input::KB>(wparam));
+		if (((1 << 30) & lparam) == 0)
+		{
+			input.WndProcKeyPresed(static_cast<Input::KB>(wparam));
+			printf("Pressed %c\n", wparam);
+		}
+		else
+		{
+			printf("REPEAT %c\n", wparam);
+		}
+
 		return 0;
 	case WM_KEYUP:
 		input.WndProcKeyReleased(static_cast<Input::KB>(wparam));
+		printf("Released %c\n", wparam);
 		return 0;
 	case WM_DESTROY:
 		isRunning = false;

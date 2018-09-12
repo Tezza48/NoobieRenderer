@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#define MAX_VALUE(x) (1 << sizeof(x) * 8) - 1
+
 using std::vector;
 
 class Input
@@ -12,7 +14,7 @@ private:
 
 public:
 	// https://docs.microsoft.com/en-gb/windows/desktop/inputdev/virtual-key-codes
-	enum KB : unsigned int 
+	enum KB : unsigned char
 	{
 		KB_BACKSPACE = 0x08,
 		KB_TAB,
@@ -117,17 +119,16 @@ public:
 	Input();
 	~Input();
 
-	void SwapAndClearKeyboard();
+	void Update();
+
 	void WndProcKeyPresed(KB keycode);
 	void WndProcKeyReleased(KB keycode);
 
-	const vector<bool> & GetCurrentKBState() const { return currentKBState; }
-	const vector<bool> & GetLastKBState() const { return lastKBState; }
+	bool GetKey(KB keycode);
+	bool GetKeyUp(KB keycode);
+	bool GetKeyDown(KB keycode);
+	
+	//inline const vector<bool> & GetCurrentKBState() const { return currentKBState; }
+	//inline const vector<bool> & GetLastKBState() const { return lastKBState; }
 
 };
-
-// Update KBState
-
-// Get Key Down
-// Get Key Held
-// Get Key Up

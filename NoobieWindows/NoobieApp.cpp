@@ -47,7 +47,7 @@ void NoobieApp::Start()
 
 void NoobieApp::Update(float dt)
 {
-	if (input.GetCurrentKBState()[Input::KB_ESCAPE])
+	if (input.GetKey(Input::KB_ESCAPE))
 	{
 		Quit();
 		return;
@@ -59,9 +59,13 @@ void NoobieApp::Update(float dt)
 
 	//view = XMMatrixLookAtLH(eyePos, target, up);
 
-	bunnyTransform.position.x = sin(accTime / 2.0f) * 10;
-	bunnyTransform.position.z = cos(accTime / 2.0f) * 10;
-	bunnyTransform.position.y = sin(accTime * 2.0f) * 10;
+	if (input.GetKey(Input::KB_A))
+		bunnyTransform.position.x -= 10 * dt;
+	if (input.GetKey(Input::KB_D))
+		bunnyTransform.position.x +=  10 * dt;
+
+	//bunnyTransform.position.z = cos(accTime / 2.0f) * 10;
+	//bunnyTransform.position.y = sin(accTime * 2.0f) * 10;
 }
 
 void NoobieApp::Draw(float dt)

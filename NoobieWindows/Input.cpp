@@ -1,25 +1,32 @@
 #include "Input.h"
-
+#include <Windows.h>
 
 
 Input::Input()
 {
-	lastKBState.resize(KB_SIZE_ELEMENT);
-	currentKBState.resize(KB_SIZE_ELEMENT);
+	lastKBState.resize(MAX_VALUE(char) + 1);
+	currentKBState.resize(MAX_VALUE(char) + 1);
 }
 
 
 Input::~Input()
 {
-
+	
 }
 
-// Call at the end of game loop
-void Input::SwapAndClearKeyboard()
+void Input::Update()
 {
 	std::swap(lastKBState, currentKBState);
+	std::fill(currentKBState.begin(), currentKBState.end(), false);
 
-	//std::fill(currentKBState.begin(), currentKBState.end(), false);
+	//for (unsigned char i = 0; i < MAX_VALUE(char); i++)
+	//{
+	//	if ((bool)lastKBState[i] != (bool)currentKBState[i])
+	//	{
+	//		bool state = currentKBState[i];
+	//		printf("%c: %s\n", i, state ? "true": "false");
+	//	}
+	//}
 }
 
 void Input::WndProcKeyPresed(KB keycode)
@@ -31,4 +38,19 @@ void Input::WndProcKeyPresed(KB keycode)
 void Input::WndProcKeyReleased(KB keycode)
 {
 	currentKBState.at(keycode) = false;
+}
+
+bool Input::GetKey(KB keycode)
+{
+	return currentKBState[keycode];
+}
+
+bool Input::GetKeyUp(KB keycode)
+{
+	return !currentKBState[keycode] && lastKBState[keycode];
+}
+
+bool Input::GetKeyDown(KB keycode)
+{
+	return currentKBState[keycode] && !lastKBState[keycode];
 }
