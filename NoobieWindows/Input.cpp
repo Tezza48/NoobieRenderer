@@ -16,17 +16,7 @@ Input::~Input()
 
 void Input::Update()
 {
-	std::swap(lastKBState, currentKBState);
-	std::fill(currentKBState.begin(), currentKBState.end(), false);
-
-	//for (unsigned char i = 0; i < MAX_VALUE(char); i++)
-	//{
-	//	if ((bool)lastKBState[i] != (bool)currentKBState[i])
-	//	{
-	//		bool state = currentKBState[i];
-	//		printf("%c: %s\n", i, state ? "true": "false");
-	//	}
-	//}
+	lastKBState = currentKBState;
 }
 
 void Input::WndProcKeyPresed(KB keycode)
