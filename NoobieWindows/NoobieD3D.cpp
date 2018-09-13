@@ -1,5 +1,5 @@
 #include "NoobieD3D.h"
-
+#include <thread>
 #include "Utilities.h"
 
 using namespace Noobie;
@@ -86,15 +86,15 @@ void NoobieD3D::Run()
 	OnResize();
 
 	lastTime = high_resolution_clock::now();
-	std::queue<float> fpsQueue;
+	std::queue<float> frameTimeQueue;
 
-	auto FPSAverage = [&fpsQueue](unsigned int max) -> float {
-		while (max < fpsQueue.size())
-			fpsQueue.pop();
+	auto QueueAverage = [](std::queue<float> &queue, unsigned int max) -> float {
+		while (max < queue.size())// reduce size to max
+			queue.pop();
 		float counter = 0;
-		for (size_t i = 0; i < fpsQueue.size(); i++)
-			counter += fpsQueue._Get_container()[i];
-		return counter / fpsQueue.size();
+		for (size_t i = 0; i < queue.size(); i++)
+			counter += queue._Get_container()[i];
+		return counter / queue.size();
 	};
 
 	while (isRunning)
@@ -110,12 +110,17 @@ void NoobieD3D::Run()
 			duration<float> frameDuration = newTime - lastTime;
 			lastTime = newTime;
 
-			fpsQueue.emplace(1.0f / frameDuration.count());
+			frameTimeQueue.emplace(frameDuration.count());
 
+			float avgFrameTime = QueueAverage(frameTimeQueue, 10);
+
+			input.Update();
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
-			printf("\rFrame Time: %.4fs FPS: %.0f", frameDuration.count(), FPSAverage(10));
-			D3D_CALL(swapChain->Present(0, 0));
+
+			printf("\rFrame Time: %.3f\t FPS: %.0f\t", avgFrameTime, 1.0f / avgFrameTime);
+
+			D3D_CALL(swapChain->Present(1, 0));
 		}
 	}
 }
@@ -216,10 +221,11 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		}
 		return 0;
 	case WM_KEYDOWN:
-		if (wparam == VK_ESCAPE)
-		{
-			isRunning = false;
-		}
+		if (((1 << 30) & lparam) == 0)
+			input.WndProcKeyPresed(static_cast<Input::KB>(wparam));
+		return 0;
+	case WM_KEYUP:
+		input.WndProcKeyReleased(static_cast<Input::KB>(wparam));
 		return 0;
 	case WM_DESTROY:
 		isRunning = false;
