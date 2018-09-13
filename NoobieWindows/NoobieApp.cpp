@@ -36,7 +36,7 @@ void NoobieApp::Start()
 	effect.Init(device);
 	effect.SetTechnique("TerrainTech");
 
-	XMVECTOR eyePos = XMVectorSet(0.0f, 30.0f, -50.0f, 1.0f);
+	XMVECTOR eyePos = XMVectorSet(0.0f, 0.0f, -50.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
@@ -59,13 +59,19 @@ void NoobieApp::Update(float dt)
 
 	//view = XMMatrixLookAtLH(eyePos, target, up);
 
-	if (input.GetKey(Input::KB_A))
-		bunnyTransform.position.x -= 10 * dt;
-	if (input.GetKey(Input::KB_D))
-		bunnyTransform.position.x +=  10 * dt;
+	if (input.GetKey(Input::KB_W))
+		bunnyTransform.position.z +=  10 * dt;
+	if (input.GetKey(Input::KB_S))
+		bunnyTransform.position.z -= 10 * dt;
 
-	//bunnyTransform.position.z = cos(accTime / 2.0f) * 10;
-	//bunnyTransform.position.y = sin(accTime * 2.0f) * 10;
+	bunnyTransform.position.x = input.GetMousePosition()[0] * 10.0f;
+	bunnyTransform.position.y = input.GetMousePosition()[1] * 10.0f;
+	if (input.GetKey(Input::KB_F))
+	{
+		DebugBreak();
+		printf("Update breaking.");
+	}
+
 }
 
 void NoobieApp::Draw(float dt)

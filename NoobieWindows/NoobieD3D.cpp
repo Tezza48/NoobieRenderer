@@ -1,5 +1,6 @@
 #include "NoobieD3D.h"
 #include <thread>
+#include <windowsx.h>
 #include "Utilities.h"
 
 using namespace Noobie;
@@ -205,6 +206,7 @@ void NoobieD3D::ClearBuffers(const float color[4])
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
+	auto normalize = [](float pos, float size) -> float { return pos / size - 0.5f; };
 	msg.hwnd = window;
 	msg.message = message;
 	msg.wParam = wparam;
@@ -222,10 +224,33 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		return 0;
 	case WM_KEYDOWN:
 		if (((1 << 30) & lparam) == 0)
-			input.WndProcKeyPresed(static_cast<Input::KB>(wparam));
+			input.WndProcKeyState(static_cast<Input::KB>(wparam), true);
 		return 0;
 	case WM_KEYUP:
-		input.WndProcKeyReleased(static_cast<Input::KB>(wparam));
+		input.WndProcKeyState(static_cast<Input::KB>(wparam), false);
+		return 0;
+	case WM_MOUSEMOVE:
+		input.WndProcMouseMoved(
+			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
+			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), -static_cast<float>(windowHeight)));
+		return 0;
+	case WM_LBUTTONDOWN:
+		input.WndProcMouseButton(0, true);
+		return 0;								  
+	case WM_RBUTTONDOWN:
+		input.WndProcMouseButton(1, true);
+		return 0;								  
+	case WM_MBUTTONDOWN:
+		input.WndProcMouseButton(2, true);
+		return 0;								
+	case WM_LBUTTONUP:
+		input.WndProcMouseButton(0, false);
+		return 0;								
+	case WM_RBUTTONUP:
+		input.WndProcMouseButton(1, false);
+		return 0;								 
+	case WM_MBUTTONUP:
+		input.WndProcMouseButton(2, false);
 		return 0;
 	case WM_DESTROY:
 		isRunning = false;

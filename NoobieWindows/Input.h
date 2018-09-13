@@ -8,11 +8,26 @@ using std::vector;
 
 class Input
 {
-private:
-	vector<bool> lastKBState;
-	vector<bool> currentKBState;
-
 public:
+	struct MouseData
+	{
+		union
+		{
+			struct
+			{
+				float mousePos[2];
+				bool button[3];
+			};
+			struct
+			{
+				float mouseX;
+				float mouseY;
+				bool lButton;
+				bool rButton;
+				bool mButton;
+			};
+		};
+	};
 	// https://docs.microsoft.com/en-gb/windows/desktop/inputdev/virtual-key-codes
 	enum KB : unsigned char
 	{
@@ -114,21 +129,41 @@ public:
 		KB_CONTROL_RIGHT,
 		KB_SIZE_ELEMENT
 	};
-
+private:
+	vector<bool> lastKBState;
+	vector<bool> currentKBState;
+	MouseData lastMouse;
+	MouseData currentMouse;
 public:
 	Input();
 	~Input();
 
 	void Update();
 
-	void WndProcKeyPresed(KB keycode);
-	void WndProcKeyReleased(KB keycode);
+	inline void WndProcKeyState(KB keycode, bool isDown)
+	{
+		currentKBState.at(keycode) = isDown;
+	}
 
-	bool GetKey(KB keycode);
-	bool GetKeyUp(KB keycode);
-	bool GetKeyDown(KB keycode);
-	
-	//inline const vector<bool> & GetCurrentKBState() const { return currentKBState; }
-	//inline const vector<bool> & GetLastKBState() const { return lastKBState; }
+	inline void WndProcMouseMoved(float xPos, float yPos)
+	{
+		currentMouse.mouseX = xPos;
+		currentMouse.mouseY = yPos;
+	}
 
+	inline void WndProcMouseButton(int button, bool isDown)
+	{
+		currentMouse.button[button] = isDown;
+	}
+
+	bool GetKey(KB keycode) const;
+	bool GetKeyUp(KB keycode) const;
+	bool GetKeyDown(KB keycode) const;
+
+	vector<float> GetMousePosition() const;
+	vector<float> GetMouseDelta() const;
+
+	bool GetMouseButton(unsigned int button) const;
+	bool GetMouseButtonUp(unsigned int button) const;
+	bool GetMouseButtonDown(unsigned int button) const;
 };
