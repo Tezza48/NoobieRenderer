@@ -84,6 +84,6 @@ void Content::LoadOBJ(PtrDevice device, std::string filename, VertexBuffer & vBu
 	}
 	else
 	{
-		//something has gone wrong and i need to remedy it
+		printf("Failed to open file: %s\n", filename.c_str());
 	}
 }
