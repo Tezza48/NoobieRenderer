@@ -6,7 +6,7 @@
 NoobieApp::NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
-	terrain = Terrain(50);
+
 }
 
 NoobieApp::~NoobieApp()
@@ -16,27 +16,12 @@ NoobieApp::~NoobieApp()
 
 void NoobieApp::Start()
 {
-	Content::LoadOBJ(device, "res/model/bunny.obj", bunny.vb, bunny.ib, 10.0f);
-	bunnyTransform.position = XMFLOAT3(0.0f, -1.0f, 0.0f);
-
-	vector<float> heightmap;
-	heightmap.reserve(50 * 50);
-
-	for (size_t y = 0; y < 50; y++)
-	{
-		for (size_t x = 0; x < 50; x++)
-		{
-			heightmap.emplace_back((sin(x / 25.0f * 4) + cos(y / 25.0f * 4)) * 5.0f);
-		}
-	}
-
-	terrain.Init(device, heightmap.data());
-	terrainTransform.position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	renderables.push_back(ShapeGenerator::GeneratePlane(device, 6, 3, 2.0f));
 
 	effect.Init(device);
 	effect.SetTechnique("TerrainTech");
 
-	XMVECTOR eyePos = XMVectorSet(0.0f, 0.0f, -50.0f, 1.0f);
+	XMVECTOR eyePos = XMVectorSet(0.0f, 5.0f, -10.0f, 1.0f);
 	XMVECTOR target = XMVectorZero();
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
@@ -59,18 +44,6 @@ void NoobieApp::Update(float dt)
 
 	//view = XMMatrixLookAtLH(eyePos, target, up);
 
-	if (input.GetKey(Input::KB_W))
-		bunnyTransform.position.z +=  10 * dt;
-	if (input.GetKey(Input::KB_S))
-		bunnyTransform.position.z -= 10 * dt;
-
-	bunnyTransform.position.x = input.GetMousePosition()[0] * 10.0f;
-	bunnyTransform.position.y = input.GetMousePosition()[1] * 10.0f;
-	if (input.GetKey(Input::KB_F))
-	{
-		DebugBreak();
-		printf("Update breaking.");
-	}
 
 }
 
@@ -82,33 +55,24 @@ void NoobieApp::Draw(float dt)
 	effect.Bind(device, context);
 
 	XMMATRIX vp = view * proj;
-	XMMATRIX wvpBunny = XMMatrixScaling(bunnyTransform.scale, bunnyTransform.scale, bunnyTransform.scale) * XMMatrixTranslationFromVector(XMLoadFloat3(&bunnyTransform.position)) * vp;
-	XMMATRIX wvpTerrain = XMMatrixTranslationFromVector(XMLoadFloat3(&terrainTransform.position)) * vp;
-
-	terrain.Bind(context);
-	effect.SetMatrix(effect.GetCBPerObject().worldViewProj, &wvpTerrain);
 
 	D3DX11_TECHNIQUE_DESC techDesc;
-	// Terrain technique
+
 	effect.SetTechnique("TerrainTech")->GetDesc(&techDesc);
 
 	for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
 	{
 		effect.GetCurrentTechnique()->GetPassByIndex(pass)->Apply(0, context.Get());
 
-		context->DrawIndexed(terrain.GetNumIndices(), 0, 0);
-	}
+		for each (Renderable obj in renderables)
+		{
+			XMMATRIX wvp = XMMatrixTranslationFromVector(XMLoadFloat3(&obj.transform.position)) * view * proj;
+			effect.SetMatrix(effect.GetCBPerObject().worldViewProj, &wvp);
+			obj.mesh.vb.Bind(context);
+			obj.mesh.ib.Bind(context);
+			context->DrawIndexed(obj.mesh.ib.GetNumIndices(), 0, 0);
+		}
 
-	bunny.vb.Bind(context);
-	bunny.ib.Bind(context);
-	effect.SetMatrix(effect.GetCBPerObject().worldViewProj, &wvpBunny);
-	effect.SetTechnique("NormalTech")->GetDesc(&techDesc);
-
-	for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
-	{
-		effect.GetCurrentTechnique()->GetPassByIndex(pass)->Apply(0, context.Get());
-
-		context->DrawIndexed(bunny.ib.GetNumIndices(), 0, 0);
 	}
 
 }

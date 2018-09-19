@@ -196,6 +196,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="NoobieD3D.cpp" />
+    <ClCompile Include="ShapeGenerator.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
@@ -209,6 +210,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />
+    <ClInclude Include="Renderable.h" />
+    <ClInclude Include="ShapeGenerator.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
