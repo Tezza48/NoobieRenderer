@@ -85,7 +85,7 @@ technique11 ColorTech
 RasterizerState Default
 {
 	FillMode = Solid;
-	CullMode = Back;
+	CullMode = back;
 	FrontCounterClockwise = false;
 };
 RasterizerState WireframeNoCull

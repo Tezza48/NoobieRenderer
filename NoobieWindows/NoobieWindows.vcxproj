@@ -186,7 +186,6 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Array2D.cpp" />
     <ClCompile Include="Behaviour.cpp" />
     <ClCompile Include="Content.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -201,13 +200,14 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Array2D.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="Content.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="MeshData.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />
     <ClInclude Include="Renderable.h" />

@@ -16,13 +16,38 @@ NoobieApp::~NoobieApp()
 
 void NoobieApp::Start()
 {
-	renderables.push_back(ShapeGenerator::GeneratePlane(device, 6, 3, 2.0f));
+	doVsync = false;
+	enableMsaa = true;
+
+	// Add renderables (objects) to the scene
+	Renderable newRenderable;
+	MeshData newMesh;
+
+	//{
+	//	newMesh = ShapeGenerator::GeneratePlane(6, 3, 2.0f);
+	//	newRenderable.mesh.vb.Init(device, newMesh.vertices);
+	//	newRenderable.mesh.ib.Init(device, newMesh.indices);
+	//	newRenderable.transform = {XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f), 0.0f};
+
+	//	renderables.push_back(newRenderable);
+	//}
+
+	{
+		newMesh = ShapeGenerator::GenerateCylinder(1.0f, 1.0f, 4.0f, 16, 8);
+		newRenderable.mesh.vb.Init(device, newMesh.vertices);
+		newRenderable.mesh.ib.Init(device, newMesh.indices);
+		newRenderable.transform = { XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f), 0.0f };
+
+		renderables.push_back(newRenderable);
+	}
+
+
 
 	effect.Init(device);
 	effect.SetTechnique("TerrainTech");
 
-	XMVECTOR eyePos = XMVectorSet(0.0f, 5.0f, -10.0f, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR eyePos = XMVectorSet(0.0f, 8.0f, -10.0f, 1.0f);
+	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
 	view = XMMatrixLookAtLH(eyePos, target, up);
@@ -38,11 +63,11 @@ void NoobieApp::Update(float dt)
 		return;
 	}
 	accTime +=dt;
-	XMVECTOR eyePos = XMVectorSet(0.0f, sin(accTime) * 20.0f, -30.0f, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR eyePos = XMVectorSet(0.0f, sin(accTime) * 8.0f, -10.0f, 1.0f);
+	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
-	//view = XMMatrixLookAtLH(eyePos, target, up);
+	view = XMMatrixLookAtLH(eyePos, target, up);
 
 
 }

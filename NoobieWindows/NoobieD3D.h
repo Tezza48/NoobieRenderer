@@ -43,6 +43,7 @@ namespace Noobie
 
 		bool enableMsaa = true;
 		UINT msaa4xQuality;
+		bool doVsync = true;;
 		
 		// Game Stuff
 		Input input;

@@ -121,7 +121,7 @@ void NoobieD3D::Run()
 
 			printf("\rFrame Time: %.3f\t FPS: %.0f\t", avgFrameTime, 1.0f / avgFrameTime);
 
-			D3D_CALL(swapChain->Present(1, 0));
+			D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
 		}
 	}
 }
