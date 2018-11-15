@@ -60,6 +60,8 @@ VertexOut VSWire(VertexIn i)
 {
 	VertexOut o;
 
+	i.pos += i.normal * 0.005;
+
 	o.posH = mul(float4(i.pos, 1.0f), worldViewProj);
 
 	o.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -91,7 +93,7 @@ RasterizerState Default
 RasterizerState WireframeNoCull
 {
 	FillMode = Wireframe;
-	CullMode = None;
+	CullMode = none;
 	FrontCounterClockwise = false;
 };
 

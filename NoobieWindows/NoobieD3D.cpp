@@ -113,7 +113,7 @@ void NoobieD3D::Run()
 
 			frameTimeQueue.emplace(frameDuration.count());
 
-			float avgFrameTime = QueueAverage(frameTimeQueue, 10);
+			float avgFrameTime = QueueAverage(frameTimeQueue, 100);
 
 			input.Update();
 			Update(frameDuration.count());

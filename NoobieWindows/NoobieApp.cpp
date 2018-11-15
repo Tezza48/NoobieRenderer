@@ -46,7 +46,7 @@ void NoobieApp::Start()
 	effect.Init(device);
 	effect.SetTechnique("TerrainTech");
 
-	XMVECTOR eyePos = XMVectorSet(0.0f, 8.0f, -10.0f, 1.0f);
+	XMVECTOR eyePos = XMVectorSet(0.0f, 8.0f, -5.0f, 1.0f);
 	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
@@ -63,7 +63,7 @@ void NoobieApp::Update(float dt)
 		return;
 	}
 	accTime +=dt;
-	XMVECTOR eyePos = XMVectorSet(0.0f, sin(accTime) * 8.0f, -10.0f, 1.0f);
+	XMVECTOR eyePos = XMVectorSet(sin(accTime * 0.5) * 5.0f, 8.0f, cos(accTime * 0.5) * 5.0f, 1.0f);
 	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
