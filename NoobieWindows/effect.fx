@@ -60,7 +60,7 @@ VertexOut VSWire(VertexIn i)
 {
 	VertexOut o;
 
-	i.pos += i.normal * 0.005;
+	//i.pos += i.normal * 0.005;
 
 	o.posH = mul(float4(i.pos, 1.0f), worldViewProj);
 
@@ -90,11 +90,21 @@ RasterizerState Default
 	CullMode = back;
 	FrontCounterClockwise = false;
 };
-RasterizerState WireframeNoCull
+RasterizerState RSWireframe
 {
 	FillMode = Wireframe;
-	CullMode = none;
+	CullMode = back;
 	FrontCounterClockwise = false;
+};
+
+DepthStencilState DSSWireframe
+{
+	DepthEnable = false;
+};
+
+DepthStencilState DSSDefault
+{
+	DepthEnable = true;
 };
 
 technique11 NormalTech
@@ -105,6 +115,7 @@ technique11 NormalTech
 		SetPixelShader(CompileShader(ps_5_0, PSNormal()));
 
 		SetRasterizerState(Default);
+		SetDepthStencilState(DSSDefault, 0);
 	}
 }
 
@@ -116,12 +127,14 @@ technique11 TerrainTech
 		SetPixelShader(CompileShader(ps_5_0, PSColor()));
 
 		SetRasterizerState(Default);
+		SetDepthStencilState(DSSDefault, 0);
 	}
 	pass p1
 	{
 		SetVertexShader(CompileShader(vs_5_0, VSWire()));
 		SetPixelShader(CompileShader(ps_5_0, PSWire()));
 
-		SetRasterizerState(WireframeNoCull);
+		SetRasterizerState(RSWireframe);
+		SetDepthStencilState(DSSWireframe, 0);
 	}
 }
