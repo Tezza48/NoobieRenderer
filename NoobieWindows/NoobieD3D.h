@@ -1,5 +1,6 @@
 #pragma once
 #include <d3d11.h>
+#include <dxgi1_2.h>
 #include <stdio.h>
 #include <string>
 #include <memory>
@@ -37,7 +38,7 @@ namespace Noobie
 		ID3D11Device * device;
 		ID3D11DeviceContext * context;
 
-		IDXGISwapChain * swapChain;
+		IDXGISwapChain1 * swapChain;
 		ID3D11RenderTargetView * renderTargetView;
 		ID3D11DepthStencilView * depthStencilView;
 
@@ -47,6 +48,8 @@ namespace Noobie
 		
 		// Game Stuff
 		Input input;
+
+		bool hasResized = false;;
 	public:
 		NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 		virtual ~NoobieD3D();

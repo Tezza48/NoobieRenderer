@@ -59,7 +59,7 @@ float4 PS(VertexOut i) :SV_TARGET
 		float3 diffuse = ndotl * float3(0.7, 0.69, 0.6);
 
 		float3 v = reflect(-lightVec, i.normalW);
-		float specFactor = pow(max(dot(v, toEyeW), 0.0f), 10.0f);
+		float specFactor = pow(max(dot(v, toEyeW), 0.0f), 100.0f);
 		col.rgb += diffuse;
 		col.rgb += float3(1.0, 1.0, 1.0) * specFactor;
 	}
@@ -68,11 +68,53 @@ float4 PS(VertexOut i) :SV_TARGET
 	return col;
 }
 
+VertexOut VSWire(VertexIn i)
+{
+	VertexOut o;
+
+	o.posH = mul(float4(i.posL, 1.0f), worldViewProj);
+	o.posW = float4(0.0, 0.0, 0.0, 0.0);
+	o.color = float4(0.0, 0.0, 0.0, 0.0);
+	o.normalW = float3(0.0, 0.0, 0.0);
+
+	return o;
+}
+
+float4 PSWire(VertexOut i) : SV_TARGET
+{
+	return float4(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+RasterizerState RSDefault
+{
+	FillMode = Solid;
+	CullMode = back;
+	FrontCounterClockwise = false;
+	DepthBias = 100;
+};
+
+RasterizerState RSWireframe
+{
+	FillMode = Wireframe;
+	CullMode = back;
+	FrontCounterClockwise = false;
+	DepthBias = -100;
+};
+
 technique11 Default
 {
 	pass p0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
+
+		SetRasterizerState(RSDefault);
+	}
+	pass p1
+	{
+		SetVertexShader(CompileShader(vs_5_0, VSWire()));
+		SetPixelShader(CompileShader(ps_5_0, PSWire()));
+
+		SetRasterizerState(RSWireframe);
 	}
 }

@@ -15,13 +15,13 @@ NoobieApp::~NoobieApp()
 
 void NoobieApp::Start()
 {
-	doVsync = false;
+	doVsync = true;
 	enableMsaa = true;
 
 	// Add renderables (objects) to the scene
 
 	Renderable * plane = new Renderable(
-		device, L"plane", ShapeGenerator::GeneratePlane(6, 6, 2.0f));
+		device, L"plane", ShapeGenerator::GeneratePlane(2, 2, 100.0f));
 	plane->position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	renderables.push_back(plane);
 
@@ -43,8 +43,6 @@ void NoobieApp::Start()
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
 	view = XMMatrixLookAtLH(eyePos, target, up);
-	proj = XMMatrixPerspectiveFovLH(XM_PI / 4, GetAspectRatio(), 0.1f, 1000.0f);
-
 }
 
 void NoobieApp::Update(float dt)
@@ -60,13 +58,17 @@ void NoobieApp::Update(float dt)
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
 	view = XMMatrixLookAtLH(eyePosW, target, up);
+	if (hasResized)
+	{
+		proj = XMMatrixPerspectiveFovLH(XM_PI / 4, GetAspectRatio(), 0.1f, 1000.0f);
+	}
 }
 
 void NoobieApp::Draw(float dt)
 {
 	XMFLOAT4 ambient;
 	XMStoreFloat4(&ambient, DirectX::Colors::CornflowerBlue);
-	ambient.z = 0.1;
+	ambient.z = 0.1f;
 	ClearBuffers(DirectX::Colors::CornflowerBlue);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

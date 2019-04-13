@@ -1,3 +1,5 @@
+#include <d3d11_4.h>
+#include <dxgi1_6.h>
 #include "NoobieD3D.h"
 #include <thread>
 #include <windowsx.h>
@@ -15,6 +17,12 @@ NoobieD3D::NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int
 	{
 		instance = this;
 	}
+
+	depthStencilView = nullptr;
+	renderTargetView = nullptr;
+	swapChain = nullptr;
+	context = nullptr;
+	device = nullptr;
 }
 
 NoobieD3D::~NoobieD3D()
@@ -72,17 +80,31 @@ bool NoobieD3D::Init()
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	// Data returned from CreateDevice
+	DXGI_SWAP_CHAIN_DESC sd;
+	sd.BufferDesc.Width = windowWidth;
+	sd.BufferDesc.Height = windowHeight;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_STRETCHED;
+	sd.SampleDesc.Count = 1;
+	sd.SampleDesc.Quality = 0;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = 2;
+	sd.OutputWindow = windowHandle;
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+	sd.Flags = NULL;
+
+	IDXGISwapChain * sc0;
+
 	D3D_FEATURE_LEVEL featureLevel;
-	D3D_CALL(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
-		createDeviceFlags, 0, 0, D3D11_SDK_VERSION,
+
+	D3D_CALL(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+		createDeviceFlags, NULL, NULL, D3D11_SDK_VERSION, &sd, &sc0, 
 		&device, &featureLevel, &context));
-
-	const char devName[] = "Device";
-	device->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(devName), devName);
-
-	const char ctxName[] = "ImmediateContext";
-	device->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(ctxName), ctxName);
+	sc0->QueryInterface(IID_PPV_ARGS(&swapChain));
 
 	D3D_CALL(device->CheckMultisampleQualityLevels(
 		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &msaa4xQuality));
@@ -140,49 +162,44 @@ void NoobieD3D::Run()
 
 			SetWindowText(windowHandle, title.c_str());
 
+			DXGI_PRESENT_PARAMETERS pp;
+			pp.DirtyRectsCount = 0;
+			pp.pDirtyRects = NULL;
+			pp.pScrollRect = NULL;
+			pp.pScrollOffset = NULL;
+			
+			// Present
 			D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
+
+			// Re Bind new backbuffer
+			ID3D11Texture2D * backBuffer;
+			D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
+			D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
+			backBuffer->Release();
+
+			context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+
+			hasResized = false;
 		}
 	}
 }
 
 void NoobieD3D::OnResize()
 {
+	// Release the old views
+	SafeRelease(renderTargetView);
+	SafeRelease(depthStencilView);
+
 	// Re create the swap chain
 	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = windowWidth;
-	sd.BufferDesc.Height = windowHeight;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	sd.SampleDesc.Count = enableMsaa ? 4 : 1;
-	sd.SampleDesc.Quality = enableMsaa ? msaa4xQuality - 1 : 0;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = 1;
-	sd.OutputWindow = windowHandle;
-	sd.Windowed = isWindowed;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	sd.Flags = NULL;
+	swapChain->GetDesc(&sd);
 
-	IDXGIDevice * dxgiDevice = nullptr;
-	D3D_CALL(device->QueryInterface(__uuidof(IDXGIDevice), (void**)&dxgiDevice));
+	swapChain->ResizeBuffers(2, windowWidth, windowHeight, sd.BufferDesc.Format, 0);
 
-	IDXGIAdapter * adapter = nullptr;
-	D3D_CALL(dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&adapter));
-
-	IDXGIFactory * factory = nullptr;
-	D3D_CALL(adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory));
-
-	D3D_CALL(factory->CreateSwapChain(device, &sd, &swapChain));
-	D3D_CALL(factory->MakeWindowAssociation(windowHandle, DXGI_MWA_NO_ALT_ENTER));
-
-	dxgiDevice->Release();
-	adapter->Release();
-	factory->Release();
+	//SafeRelease(renderTargetView);
 
 	ID3D11Texture2D * backBuffer;
-	D3D_CALL(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
+	D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
 	D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
 	backBuffer->Release();
 
@@ -192,8 +209,8 @@ void NoobieD3D::OnResize()
 	dsd.MipLevels = 1;
 	dsd.ArraySize = 1;
 	dsd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsd.SampleDesc.Count = enableMsaa ? 4 : 1;
-	dsd.SampleDesc.Quality = enableMsaa ? msaa4xQuality - 1 : 0;
+	dsd.SampleDesc.Count = 1;
+	dsd.SampleDesc.Quality = 0;
 	dsd.Usage = D3D11_USAGE_DEFAULT;
 	dsd.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	dsd.CPUAccessFlags = 0;
@@ -215,6 +232,7 @@ void NoobieD3D::OnResize()
 	vp.MaxDepth = 1.0f;
 
 	context->RSSetViewports(1, &vp);
+	hasResized = true;
 }
 
 void NoobieD3D::ClearBuffers(const float color[4])
