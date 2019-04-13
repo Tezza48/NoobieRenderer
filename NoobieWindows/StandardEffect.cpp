@@ -2,14 +2,17 @@
 
 StandardEffect::StandardEffect()
 {
-	cbPerObject = new CBPerObject();
+	perObject = new PerObject();
+	perFrame = new PerFrame();
 }
 
 
 StandardEffect::~StandardEffect()
 {
-	delete cbPerObject;
-	cbPerObject = nullptr;
+	delete perObject;
+	perObject = nullptr;
+	delete perFrame;
+	perFrame = nullptr;
 
 	SafeRelease(inputLayout);
 	SafeRelease(currentTechnique);
@@ -30,7 +33,12 @@ void StandardEffect::Init(ID3D11Device * device)
 	
 	errors->Release();
 	currentTechnique = effect->GetTechniqueByName("Default");
-	cbPerObject->worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
+	perObject->worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
+	perObject->world = effect->GetVariableByName("world")->AsMatrix();
+	perObject->worldInverseTranspose = effect->GetVariableByName("worldInverseTranspose")->AsMatrix();
+	perObject->eyePosW = effect->GetVariableByName("eyePosW")->AsVector();
+
+	perFrame->ambientLight = effect->GetVariableByName("ambientLight")->AsVector();
 }
 
 void StandardEffect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
@@ -54,4 +62,9 @@ void StandardEffect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
 void StandardEffect::SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value)
 {
 	targetMat->SetMatrix(reinterpret_cast<float *>(value));
+}
+
+void StandardEffect::SetVector(ID3DX11EffectVectorVariable * targetVec, XMVECTOR * value)
+{
+	targetVec->SetFloatVector(reinterpret_cast<float *>(value));
 }

@@ -15,26 +15,35 @@ class StandardEffect
 {
 private:
 	// cbuffer stuff
-	struct CBPerObject
+	struct PerObject
 	{
 		ID3DX11EffectMatrixVariable * worldViewProj = NULL;
-		~CBPerObject()
+		ID3DX11EffectMatrixVariable * world = NULL;
+		ID3DX11EffectMatrixVariable * worldInverseTranspose = NULL;
+		ID3DX11EffectVectorVariable * eyePosW = NULL;
+		~PerObject()
 		{
 			SafeRelease(worldViewProj);
+			SafeRelease(world);
+			SafeRelease(worldInverseTranspose);
 		}
 	};
 
-	//struct CBPerFrame
-	//{
-	//	DirLight dirLight;
-	//};
+	struct PerFrame
+	{
+		ID3DX11EffectVectorVariable * ambientLight;
+		~PerFrame()
+		{
+			SafeRelease(ambientLight);
+		}
+	};
 
 	ID3DX11Effect * effect = NULL;
 	ID3DX11EffectTechnique * currentTechnique = NULL;
 	ID3D11InputLayout * inputLayout = NULL;
 
-	CBPerObject * cbPerObject;
-	//CBPerFrame cbPerFrame;
+	PerObject * perObject;
+	PerFrame * perFrame;
 
 public:
 	StandardEffect();
@@ -47,10 +56,12 @@ public:
 
 	// Getters
 	ID3DX11EffectTechnique * GetCurrentTechnique() const { return currentTechnique; }
-	CBPerObject * GetCBPerObject() { return cbPerObject; }
+	PerObject * getPerObject() { return perObject; }
+	PerFrame * getPerFrame() { return perFrame; }
 
 	// Setters
 	void SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value);
+	void SetVector(ID3DX11EffectVectorVariable * targetVec, XMVECTOR * value);
 	ID3DX11EffectTechnique * SetTechnique(std::string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); return currentTechnique; }
 };
 

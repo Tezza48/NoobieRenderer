@@ -3,48 +3,67 @@
 cbuffer perObject
 {
 	float4x4 worldViewProj;
+	float4x4 world;
+	float4x4 worldInverseTranspose;
+	float3 eyePosW;
 };
 
-//cbuffer perFrame
-//{
-//	DirectionalLight dirLight;
-//};
+cbuffer perFrame
+{
+	float4 ambientLight;
+};
 
 struct VertexIn
 {
-	float3 pos : POSITION;
+	float3 posL : POSITION;
 	float4 color : COLOR;
-	float3 normal : NORMAL;
+	float3 normalL : NORMAL;
 	//float2 tex : TEXCOORD0;
 };
 
 struct VertexOut
 {
 	float4 posH : SV_POSITION;
+	float4 posW : POSITION;
 	float4 color : COLOR;
-	float3 normal : NORMAL;
+	float3 normalW : NORMAL;
 	//float2 tex : TEXCOORD0;
 };
 
 VertexOut VS(VertexIn i)
 {
 	VertexOut o;
-	o.posH = mul(float4(i.pos, 1.0), worldViewProj);
+	o.posH = mul(float4(i.posL, 1.0), worldViewProj);
+	o.posW = mul(float4(i.posL, 1.0), world);
 	o.color = i.color;
-	o.normal = i.normal;
-	//o.tex = i.tex;
+	o.normalW = mul(i.normalL, (float3x3)worldInverseTranspose);
 
 	return o;
 }
 
 float4 PS(VertexOut i) :SV_TARGET
 {
-	float4 col;
-	//float nDotL = dot(i.normal, -dirLight.direction);
-	//col = nDotL * dirLight.color;
+	float4 col = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	float ndotl = dot(i.normal, -float3(-1.0, -1.0, 1.0));
-	col = ndotl * float4(0.1, 0.6, 0.9, 1.0);
+	i.normalW = normalize(i.normalW);
+
+	float3 toEyeW = normalize(eyePosW - i.posW.xyz);
+
+	float3 lightVec = normalize(-float3(-1.0, -1.0, 1.0));
+
+	float ndotl = dot(i.normalW, lightVec);
+
+	[flatten]
+	if (ndotl > 0.0f)
+	{
+		float3 diffuse = ndotl * float3(0.7, 0.69, 0.6);
+
+		float3 v = reflect(-lightVec, i.normalW);
+		float specFactor = pow(max(dot(v, toEyeW), 0.0f), 10.0f);
+		col.rgb += diffuse;
+		col.rgb += float3(1.0, 1.0, 1.0) * specFactor;
+	}
+	col.rgb += ambientLight.rgb * ambientLight.a;
 
 	return col;
 }

@@ -35,12 +35,6 @@ void NoobieApp::Start()
 	cone->position = XMFLOAT3(2.0f, 0.0f, 0.0f);
 	renderables.push_back(cone);
 
-	for (auto obj : renderables)
-	{
-		wprintf(L"%s is at position: x=%.2f, y=%.2f, z=%.2f.\n",
-			obj->name.c_str(), obj->position.x, obj->position.y, obj->position.z);
-	}
-
 	effect.Init(device);
 	effect.SetTechnique("Default");
 
@@ -61,16 +55,19 @@ void NoobieApp::Update(float dt)
 		return;
 	}
 	accTime +=dt;
-	XMVECTOR eyePos = XMVectorSet(sin(accTime * 0.5f) * 8.0f, 8.0f, cos(accTime * 0.5f) * 8.0f, 1.0f);
+	eyePosW = XMVectorSet(sin(accTime * 0.5f) * 8.0f, 8.0f, cos(accTime * 0.5f) * 8.0f, 1.0f);
 	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
-	view = XMMatrixLookAtLH(eyePos, target, up);
+	view = XMMatrixLookAtLH(eyePosW, target, up);
 }
 
 void NoobieApp::Draw(float dt)
 {
-	ClearBuffers(DirectX::Colors::DarkBlue);
+	XMFLOAT4 ambient;
+	XMStoreFloat4(&ambient, DirectX::Colors::CornflowerBlue);
+	ambient.z = 0.1;
+	ClearBuffers(DirectX::Colors::CornflowerBlue);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	effect.Bind(device, context);
@@ -79,17 +76,32 @@ void NoobieApp::Draw(float dt)
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 
-	auto technique = effect.SetTechnique("Default");
+	auto technique = effect.GetCurrentTechnique();
 	technique->GetDesc(&techDesc);
+
+	auto ambientVector = XMLoadFloat4(&ambient);
+	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
 
 	for (auto obj : renderables)
 	{
-		XMMATRIX wvp = obj->getWorld() * vp;
+		auto world = obj->getWorld();
+		XMMATRIX wvp = world * vp;
+		XMMATRIX worldInvTrans;
+		{
+			auto w = world;
+			w.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+			XMVECTOR det = XMMatrixDeterminant(w);
+			worldInvTrans = XMMatrixTranspose(XMMatrixInverse(&det, w));
+		}
 
 		obj->vb.Bind(context);
 		obj->ib.Bind(context);
 
-		effect.SetMatrix(effect.GetCBPerObject()->worldViewProj, &wvp);
+		effect.SetMatrix(effect.getPerObject()->worldViewProj, &wvp);
+		effect.SetMatrix(effect.getPerObject()->world, &world);
+		effect.SetMatrix(effect.getPerObject()->worldInverseTranspose, &worldInvTrans);
+		effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
 
 		for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
 		{

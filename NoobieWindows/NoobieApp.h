@@ -24,6 +24,7 @@ private:
 	float accTime = 0;
 
 	XMMATRIX view, proj;
+	XMVECTOR eyePosW;
 
 public:
 	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);

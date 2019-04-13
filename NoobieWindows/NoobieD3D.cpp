@@ -78,6 +78,12 @@ bool NoobieD3D::Init()
 		createDeviceFlags, 0, 0, D3D11_SDK_VERSION,
 		&device, &featureLevel, &context));
 
+	const char devName[] = "Device";
+	device->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(devName), devName);
+
+	const char ctxName[] = "ImmediateContext";
+	device->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(ctxName), ctxName);
+
 	D3D_CALL(device->CheckMultisampleQualityLevels(
 		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &msaa4xQuality));
 	assert(msaa4xQuality > 0);
