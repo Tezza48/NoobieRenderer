@@ -1,35 +1,39 @@
-#include "Effect.h"
+#include "StandardEffect.h"
 
-Effect::Effect()
+StandardEffect::StandardEffect()
 {
-	
+	cbPerObject = new CBPerObject();
 }
 
 
-Effect::~Effect()
+StandardEffect::~StandardEffect()
 {
-	SafeRelease(effect);
-	SafeRelease(currentTechnique);
+	delete cbPerObject;
+	cbPerObject = nullptr;
+
 	SafeRelease(inputLayout);
+	SafeRelease(currentTechnique);
+	SafeRelease(effect);
 }
 
-void Effect::Init(ID3D11Device * device)
+void StandardEffect::Init(ID3D11Device * device)
 {
 	UINT flags1 = 0;
 	ID3DBlob * errors;
 #if DEBUG || _DEBUG
 	flags1 |= D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 #endif
-	D3DX11CompileEffectFromFile(L"effect.fx", NULL, NULL, flags1, NULL, device, &effect, &errors);
+
+	D3DX11CompileEffectFromFile(L"standard.fx", NULL, NULL, flags1, NULL, device, &effect, &errors);
 	
 	printf(static_cast<char *>(errors->GetBufferPointer()));
 	
 	errors->Release();
 	currentTechnique = effect->GetTechniqueByName("Default");
-	cbPerObject.worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
+	cbPerObject->worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
 }
 
-void Effect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
+void StandardEffect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
 {
 	if (inputLayout == NULL)
 	{
@@ -47,7 +51,7 @@ void Effect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
 	context->IASetInputLayout(inputLayout);
 }
 
-void Effect::SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value)
+void StandardEffect::SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value)
 {
 	targetMat->SetMatrix(reinterpret_cast<float *>(value));
 }

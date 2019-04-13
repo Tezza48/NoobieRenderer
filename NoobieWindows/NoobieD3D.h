@@ -34,12 +34,12 @@ namespace Noobie
 		MSG msg;
 
 		// D3D information
-		PtrDevice device;
-		PtrContext context;
+		ID3D11Device * device;
+		ID3D11DeviceContext * context;
 
-		PtrSwapChain swapChain;
-		PtrRenderTargetView renderTargetView;
-		PtrDepthStencilView depthStencilView;
+		IDXGISwapChain * swapChain;
+		ID3D11RenderTargetView * renderTargetView;
+		ID3D11DepthStencilView * depthStencilView;
 
 		bool enableMsaa = true;
 		UINT msaa4xQuality;

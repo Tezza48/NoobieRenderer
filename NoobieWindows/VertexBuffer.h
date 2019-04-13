@@ -12,15 +12,17 @@ class VertexBuffer
 {
 private:
 	vector<Vertex> vertices;// Cached vertex Buffer
-	PtrBuffer buffer = NULL;
+	ID3D11Buffer * buffer = NULL;
 	//InputLayout layout;
 
 public:
 	VertexBuffer();
 	~VertexBuffer();
 
-	void Init(PtrDevice device, vector<Vertex> initialData);
+	void Init(ID3D11Device * device, vector<Vertex> initialData);
 
-	void Bind(PtrContext context) const;
+	void Bind(ID3D11DeviceContext * context) const;
+
+	ID3D11Buffer * GetBuffer() const { return buffer; }
 };
 

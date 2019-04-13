@@ -2,6 +2,7 @@
 #include <thread>
 #include <windowsx.h>
 #include "Utilities.h"
+#include <string>
 
 using namespace Noobie;
 
@@ -18,6 +19,12 @@ NoobieD3D::NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int
 
 NoobieD3D::~NoobieD3D()
 {
+	SafeRelease(depthStencilView);
+	SafeRelease(renderTargetView);
+	SafeRelease(swapChain);
+	SafeRelease(context);
+	SafeRelease(device);
+
 	DestroyWindow(windowHandle);
 }
 
@@ -69,7 +76,7 @@ bool NoobieD3D::Init()
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D_CALL(D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
 		createDeviceFlags, 0, 0, D3D11_SDK_VERSION,
-		device.GetAddressOf(), &featureLevel, context.GetAddressOf()));
+		&device, &featureLevel, &context));
 
 	D3D_CALL(device->CheckMultisampleQualityLevels(
 		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &msaa4xQuality));
@@ -98,6 +105,7 @@ void NoobieD3D::Run()
 		return counter / queue.size();
 	};
 
+	bool done = false;
 	while (isRunning)
 	{
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
@@ -113,13 +121,18 @@ void NoobieD3D::Run()
 
 			frameTimeQueue.emplace(frameDuration.count());
 
-			float avgFrameTime = QueueAverage(frameTimeQueue, 100);
+			float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
 			input.Update();
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
 
-			printf("\rFrame Time: %.3f\t FPS: %.0f\t", avgFrameTime, 1.0f / avgFrameTime);
+			std::wstring title = L"Frame Time : ";
+			title += std::to_wstring(avgFrameTime);
+			title += L"ms\t\t FPS: ";
+			title += std::to_wstring((int)(1.0f / avgFrameTime));
+
+			SetWindowText(windowHandle, title.c_str());
 
 			D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
 		}
@@ -155,7 +168,7 @@ void NoobieD3D::OnResize()
 	IDXGIFactory * factory = nullptr;
 	D3D_CALL(adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory));
 
-	D3D_CALL(factory->CreateSwapChain(device.Get(), &sd, swapChain.GetAddressOf()));
+	D3D_CALL(factory->CreateSwapChain(device, &sd, &swapChain));
 	D3D_CALL(factory->MakeWindowAssociation(windowHandle, DXGI_MWA_NO_ALT_ENTER));
 
 	dxgiDevice->Release();
@@ -164,7 +177,7 @@ void NoobieD3D::OnResize()
 
 	ID3D11Texture2D * backBuffer;
 	D3D_CALL(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
-	D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, renderTargetView.GetAddressOf()));
+	D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
 	backBuffer->Release();
 
 	D3D11_TEXTURE2D_DESC dsd;
@@ -182,10 +195,10 @@ void NoobieD3D::OnResize()
 
 	ID3D11Texture2D * depthStencilBuffer;
 	D3D_CALL(device->CreateTexture2D(&dsd, 0, &depthStencilBuffer));
-	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, 0, depthStencilView.GetAddressOf()));
+	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView));
 	depthStencilBuffer->Release();
 
-	context->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilView.Get());
+	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = 0.0f;
@@ -200,8 +213,8 @@ void NoobieD3D::OnResize()
 
 void NoobieD3D::ClearBuffers(const float color[4])
 {
-	context->ClearRenderTargetView(renderTargetView.Get(), color);
-	context->ClearDepthStencilView(depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	context->ClearRenderTargetView(renderTargetView, color);
+	context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)

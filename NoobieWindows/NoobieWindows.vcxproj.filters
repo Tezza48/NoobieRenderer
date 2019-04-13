@@ -24,9 +24,6 @@
     <ClCompile Include="IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Content.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NoobieD3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,15 +48,18 @@
     <ClCompile Include="ShapeGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StandardEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Content.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NoobieD3D.h">
@@ -101,9 +101,18 @@
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StandardEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="effect.fx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lightHelper.fx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="standard.fx">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

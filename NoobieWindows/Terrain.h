@@ -1,5 +1,5 @@
 #pragma once
-#include "Utilities.h"
+#include <d3d11.h>
 #include "Vertex.h"
 #include <vector>
 
@@ -11,8 +11,8 @@ private:
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
 
-	PtrBuffer vertexBuffer;
-	PtrBuffer indexBuffer;
+	ID3D11Buffer * vertexBuffer;
+	ID3D11Buffer * indexBuffer;
 
 	unsigned int size;// width and height in quads
 private:
@@ -22,9 +22,9 @@ public:
 	Terrain(unsigned int size) : size(size) { assert(size > 1); };
 	~Terrain();
 
-	void Init(PtrDevice device, float * heightmap);
+	void Init(ID3D11Device * device, float * heightmap);
 
-	void Bind(PtrContext context);
+	void Bind(ID3D11DeviceContext * context);
 
 	unsigned int GetNumIndices() const { return indices.size(); }
 };

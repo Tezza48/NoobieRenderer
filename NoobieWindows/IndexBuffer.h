@@ -7,16 +7,18 @@ class IndexBuffer
 {
 private:
 	std::vector<unsigned int> indices;// Cached index buffer
-	PtrBuffer buffer = NULL;
+	ID3D11Buffer * buffer = NULL;
 
 public:
 	IndexBuffer();
 	~IndexBuffer();
 
-	void Init(PtrDevice device, std::vector<unsigned int> initialData);
+	void Init(ID3D11Device * device, std::vector<unsigned int> initialData);
 
-	void Bind(PtrContext context) const;
+	void Bind(ID3D11DeviceContext * context) const;
 
 	unsigned int GetNumIndices() const { return indices.size(); }
+
+	ID3D11Buffer * GetBuffer() const { return buffer; }
 };
 

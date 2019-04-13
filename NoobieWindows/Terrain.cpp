@@ -1,5 +1,5 @@
 #include "Terrain.h"
-
+#include "Utilities.h"
 #include <math.h>
 
 void Terrain::GenMesh(float * heightmap)
@@ -75,9 +75,11 @@ void Terrain::GenMesh(float * heightmap)
 
 Terrain::~Terrain()
 {
+	SafeRelease(vertexBuffer);
+	SafeRelease(indexBuffer);
 }
 
-void Terrain::Init(PtrDevice device, float * heightmap)
+void Terrain::Init(ID3D11Device * device, float * heightmap)
 {
 	GenMesh(heightmap);
 
@@ -93,7 +95,7 @@ void Terrain::Init(PtrDevice device, float * heightmap)
 	D3D11_SUBRESOURCE_DATA vbInitialData;
 	vbInitialData.pSysMem = vertices.data();
 
-	D3D_CALL(device->CreateBuffer(&vbd, &vbInitialData, vertexBuffer.GetAddressOf()));
+	D3D_CALL(device->CreateBuffer(&vbd, &vbInitialData, &vertexBuffer));
 
 	// index Buffer
 	D3D11_BUFFER_DESC ibd;
@@ -107,13 +109,13 @@ void Terrain::Init(PtrDevice device, float * heightmap)
 	D3D11_SUBRESOURCE_DATA ibInitialData;
 	ibInitialData.pSysMem = indices.data();
 
-	D3D_CALL(device->CreateBuffer(&ibd, &ibInitialData, indexBuffer.GetAddressOf()));
+	D3D_CALL(device->CreateBuffer(&ibd, &ibInitialData, &indexBuffer));
 }
 
-void Terrain::Bind(PtrContext context)
+void Terrain::Bind(ID3D11DeviceContext * context)
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 }

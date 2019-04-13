@@ -187,7 +187,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Behaviour.cpp" />
-    <ClCompile Include="Content.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -195,14 +194,15 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="NoobieD3D.cpp" />
+    <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="ShapeGenerator.cpp" />
+    <ClCompile Include="StandardEffect.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Content.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IndexBuffer.h" />
@@ -212,6 +212,7 @@
     <ClInclude Include="NoobieD3D.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="ShapeGenerator.h" />
+    <ClInclude Include="StandardEffect.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
@@ -219,6 +220,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="effect.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lightHelper.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="standard.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

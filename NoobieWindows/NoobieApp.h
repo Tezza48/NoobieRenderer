@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include "Utilities.h"
 #include "Effect.h"
+#include "StandardEffect.h"
 #include "Renderable.h"
 #include "ShapeGenerator.h"
 
@@ -16,9 +17,9 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-	vector<Renderable> renderables;
+	vector<Renderable *> renderables;
 	
-	Effect effect;
+	StandardEffect effect;
 
 	float accTime = 0;
 
