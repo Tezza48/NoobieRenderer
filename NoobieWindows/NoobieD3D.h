@@ -1,5 +1,6 @@
 #pragma once
 #include <d3d11.h>
+#include <dxgi1_2.h>
 #include <stdio.h>
 #include <string>
 #include <memory>
@@ -19,6 +20,9 @@ namespace Noobie
 
 	class NoobieD3D
 	{
+#if DEBUG || _DEBUG
+		ID3D11Debug * debug;
+#endif
 	private:
 		static NoobieD3D * instance;
 
@@ -34,12 +38,12 @@ namespace Noobie
 		MSG msg;
 
 		// D3D information
-		PtrDevice device;
-		PtrContext context;
+		ID3D11Device * device;
+		ID3D11DeviceContext * context;
 
-		PtrSwapChain swapChain;
-		PtrRenderTargetView renderTargetView;
-		PtrDepthStencilView depthStencilView;
+		IDXGISwapChain1 * swapChain;
+		ID3D11RenderTargetView * renderTargetView;
+		ID3D11DepthStencilView * depthStencilView;
 
 		bool enableMsaa = true;
 		UINT msaa4xQuality;
@@ -47,6 +51,8 @@ namespace Noobie
 		
 		// Game Stuff
 		Input input;
+
+		bool hasResized = false;;
 	public:
 		NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 		virtual ~NoobieD3D();

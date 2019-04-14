@@ -1,5 +1,4 @@
 #include "ShapeGenerator.h"
-
 #define PI 3.141593f
 
 /* 

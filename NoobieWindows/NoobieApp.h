@@ -4,8 +4,11 @@
 #include <DirectXMath.h>
 #include "Utilities.h"
 #include "Effect.h"
+#include "StandardEffect.h"
 #include "Renderable.h"
 #include "ShapeGenerator.h"
+#include "BaseObject.h"
+#include "DemoCylinderObject.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -16,13 +19,19 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-	vector<Renderable> renderables;
+vector<BaseObject *> scene; // Master Vector of all objects
+vector<BaseObject *> updatables;
+vector<Renderable *> renderables;
 	
-	Effect effect;
+	DemoCylinderObject * cone;
+	Renderable * cockpit;
+
+	StandardEffect effect;
 
 	float accTime = 0;
 
 	XMMATRIX view, proj;
+	XMVECTOR eyePosW;
 
 public:
 	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);

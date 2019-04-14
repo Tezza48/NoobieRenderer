@@ -3,13 +3,10 @@
 #include "Utilities.h"
 #include "VertexBuffer.h"
 #include <string>
+#include <wrl.h>
 
 using std::string;
 using Microsoft::WRL::ComPtr;
-
-typedef ComPtr<ID3DX11Effect> PtrEffect;
-typedef ComPtr<ID3DX11EffectTechnique> PtrEffectTechnique;
-typedef ComPtr<ID3DX11EffectMatrixVariable> PtrEffectMatVar;
 
 class Effect
 {
@@ -17,12 +14,20 @@ private:
 	// cbuffer stuff
 	struct CBPerObject
 	{
-		PtrEffectMatVar worldViewProj = NULL;
+		ID3DX11EffectMatrixVariable * worldViewProj = NULL;
+		~CBPerObject()
+		{
+			if (worldViewProj)
+			{
+				worldViewProj->Release();
+				worldViewProj = nullptr;
+			}
+		}
 	};
 
-	PtrEffect effect = NULL;
-	PtrEffectTechnique currentTechnique = NULL;
-	PtrInputLayout inputLayout = NULL;
+	ID3DX11Effect * effect = NULL;
+	ID3DX11EffectTechnique * currentTechnique = NULL;
+	ID3D11InputLayout * inputLayout = NULL;
 
 	CBPerObject cbPerObject;
 
@@ -30,17 +35,17 @@ public:
 	Effect();
 	virtual ~Effect();
 
-	void Init(PtrDevice device);
-	void Bind(PtrDevice device, PtrContext context);
+	void Init(ID3D11Device * device);
+	void Bind(ID3D11Device * device, ID3D11DeviceContext * context);
 
 	//void Draw();
 
 	// Getters
-	PtrEffectTechnique GetCurrentTechnique() const { return currentTechnique; }
+	ID3DX11EffectTechnique * GetCurrentTechnique() const { return currentTechnique; }
 	CBPerObject & GetCBPerObject() { return cbPerObject; }
 
 	// Setters
-	void SetMatrix(PtrEffectMatVar targetMat, XMMATRIX * value);
-	PtrEffectTechnique SetTechnique(string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); return currentTechnique; }
+	void SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value);
+	ID3DX11EffectTechnique * SetTechnique(string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); return currentTechnique; }
 };
 

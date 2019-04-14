@@ -2,25 +2,36 @@
 #include <DirectXMath.h>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "MeshData.h"
+#include "BaseObject.h"
+#include "Material.h"
 
-using DirectX::XMFLOAT3;
-using DirectX::XMFLOAT4;
-
-struct Renderable
+class Renderable: public BaseObject
 {
-	struct Transform
-	{
-		XMFLOAT3 position;
-		XMFLOAT4 rotation;
-		float scale = 10.0f;
-	};
+private:
+protected:
+	VertexBuffer vb;
+	IndexBuffer ib;
+	Material mat;
 
-	struct Mesh
-	{
-		VertexBuffer vb;
-		IndexBuffer ib;
-	};
+protected:
+	Renderable() {}
 
-	Transform transform;
-	Mesh mesh;
+public:
+	Renderable(ID3D11Device * device, MeshData mesh);
+
+	inline XMMATRIX getWorld() { return XMMatrixTransformation(
+		XMVECTOR(), 
+		XMVECTOR(), 
+		XMVectorSet(scale, scale, scale, 1.0), 
+		XMVECTOR(), 
+		XMLoadFloat4(&rotation), 
+		XMLoadFloat3(&position)); }
+
+	void Bind(ID3D11DeviceContext * context);
+
+	void Update(float dt, const Input & input) override {}
+
+	unsigned int GetNumIndices();
+	Material & GetMat();
 };

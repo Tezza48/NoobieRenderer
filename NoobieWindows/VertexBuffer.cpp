@@ -3,15 +3,15 @@
 
 VertexBuffer::VertexBuffer()
 {
-
+	buffer = nullptr;
 }
 
 VertexBuffer::~VertexBuffer()
 {
-
+	SafeRelease(buffer);
 }
 
-void VertexBuffer::Init(PtrDevice device, std::vector<Vertex> initialData)
+void VertexBuffer::Init(ID3D11Device * device, std::vector<Vertex> initialData)
 {
 	// Save the data for use later
 	vertices = initialData;
@@ -30,12 +30,15 @@ void VertexBuffer::Init(PtrDevice device, std::vector<Vertex> initialData)
 	data.pSysMem = vertices.data();// get the array from the vector
 
 	// Tell the device to create the buffer
-	D3D_CALL(device->CreateBuffer(&vbd, &data, buffer.GetAddressOf()));
+	D3D_CALL(device->CreateBuffer(&vbd, &data, &buffer));
+
+	const char c_szName[] = "VertexBuffer";
+	D3D_CALL(buffer->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(c_szName) - 1, c_szName));
 }
 
-void VertexBuffer::Bind(PtrContext context) const
+void VertexBuffer::Bind(ID3D11DeviceContext * context) const
 {
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	context->IASetVertexBuffers(0, 1, buffer.GetAddressOf(), &stride, &offset);
+	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 }

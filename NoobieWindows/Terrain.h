@@ -1,31 +1,22 @@
 #pragma once
-#include "Utilities.h"
+#include <d3d11.h>
 #include "Vertex.h"
 #include <vector>
+#include "Renderable.h"
 
 using std::vector;
 
-class Terrain
+class Terrain: public Renderable
 {
 private:
-	vector<Vertex> vertices;
-	vector<unsigned int> indices;
-
-	PtrBuffer vertexBuffer;
-	PtrBuffer indexBuffer;
+	MeshData mesh;
 
 	unsigned int size;// width and height in quads
 private:
 	void GenMesh(float * heightmap);
 public:
-	Terrain() {};
+	Terrain(ID3D11Device * device, float * heightmap, unsigned int size);
 	Terrain(unsigned int size) : size(size) { assert(size > 1); };
 	~Terrain();
-
-	void Init(PtrDevice device, float * heightmap);
-
-	void Bind(PtrContext context);
-
-	unsigned int GetNumIndices() const { return indices.size(); }
 };
 

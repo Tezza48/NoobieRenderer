@@ -84,22 +84,24 @@ technique11 ColorTech
 	}
 }
 
-RasterizerState Default
+RasterizerState RSDefault
 {
 	FillMode = Solid;
 	CullMode = back;
 	FrontCounterClockwise = false;
+	DepthBias = 0;
 };
 RasterizerState RSWireframe
 {
 	FillMode = Wireframe;
 	CullMode = back;
 	FrontCounterClockwise = false;
+	DepthBias = -100;
 };
 
 DepthStencilState DSSWireframe
 {
-	DepthEnable = false;
+	DepthEnable = true;
 };
 
 DepthStencilState DSSDefault
@@ -114,27 +116,27 @@ technique11 NormalTech
 		SetVertexShader(CompileShader(vs_5_0, VSNormal()));
 		SetPixelShader(CompileShader(ps_5_0, PSNormal()));
 
-		SetRasterizerState(Default);
+		SetRasterizerState(RSDefault);
 		SetDepthStencilState(DSSDefault, 0);
 	}
 }
 
-technique11 TerrainTech
+technique11 Default
 {
 	pass p0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VSColor()));
 		SetPixelShader(CompileShader(ps_5_0, PSColor()));
 
-		SetRasterizerState(Default);
+		SetRasterizerState(RSDefault);
 		SetDepthStencilState(DSSDefault, 0);
 	}
-	pass p1
-	{
-		SetVertexShader(CompileShader(vs_5_0, VSWire()));
-		SetPixelShader(CompileShader(ps_5_0, PSWire()));
+	//pass p1
+	//{
+	//	SetVertexShader(CompileShader(vs_5_0, VSWire()));
+	//	SetPixelShader(CompileShader(ps_5_0, PSWire()));
 
-		SetRasterizerState(RSWireframe);
-		SetDepthStencilState(DSSWireframe, 0);
-	}
+	//	SetRasterizerState(RSWireframe);
+	//	SetDepthStencilState(DSSWireframe, 0);
+	//}
 }
