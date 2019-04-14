@@ -3,6 +3,7 @@
 #include "VertexBuffer.h"
 #include <string>
 #include "Utilities.h"
+#include "Material.h"
 
 //struct DirLight
 //{
@@ -21,11 +22,14 @@ private:
 		ID3DX11EffectMatrixVariable * world = NULL;
 		ID3DX11EffectMatrixVariable * worldInverseTranspose = NULL;
 		ID3DX11EffectVectorVariable * eyePosW = NULL;
+		ID3DX11EffectVariable * mat = NULL;
 		~PerObject()
 		{
 			SafeRelease(worldViewProj);
 			SafeRelease(world);
 			SafeRelease(worldInverseTranspose);
+			SafeRelease(eyePosW);
+			SafeRelease(mat);
 		}
 	};
 
@@ -62,6 +66,7 @@ public:
 	// Setters
 	void SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value);
 	void SetVector(ID3DX11EffectVectorVariable * targetVec, XMVECTOR * value);
+	void SetVariable(ID3DX11EffectVariable * targetVar, void* value, size_t size);
 	ID3DX11EffectTechnique * SetTechnique(std::string name) { currentTechnique = effect->GetTechniqueByName(name.c_str()); return currentTechnique; }
 };
 

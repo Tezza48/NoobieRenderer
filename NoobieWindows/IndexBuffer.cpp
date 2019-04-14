@@ -33,6 +33,9 @@ void IndexBuffer::Init(ID3D11Device * device, std::vector<unsigned int> initialD
 	data.pSysMem = indices.data();
 
 	D3D_CALL(device->CreateBuffer(&ibd, &data, &buffer));
+
+	const char c_szName[] = "IndexBuffer";
+	D3D_CALL(buffer->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(c_szName) - 1, c_szName));
 }
 
 void IndexBuffer::Bind(ID3D11DeviceContext * context) const

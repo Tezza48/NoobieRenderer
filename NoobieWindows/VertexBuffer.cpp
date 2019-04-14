@@ -31,6 +31,9 @@ void VertexBuffer::Init(ID3D11Device * device, std::vector<Vertex> initialData)
 
 	// Tell the device to create the buffer
 	D3D_CALL(device->CreateBuffer(&vbd, &data, &buffer));
+
+	const char c_szName[] = "VertexBuffer";
+	D3D_CALL(buffer->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(c_szName) - 1, c_szName));
 }
 
 void VertexBuffer::Bind(ID3D11DeviceContext * context) const

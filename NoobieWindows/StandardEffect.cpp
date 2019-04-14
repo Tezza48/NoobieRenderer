@@ -1,4 +1,5 @@
 #include "StandardEffect.h"
+#define D3D_COMPILE_STANDARD_FILE_INCLUDE ((ID3DInclude*)(UINT_PTR)1)
 
 StandardEffect::StandardEffect()
 {
@@ -26,8 +27,8 @@ void StandardEffect::Init(ID3D11Device * device)
 #if DEBUG || _DEBUG
 	flags1 |= D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 #endif
-
-	D3DX11CompileEffectFromFile(L"standard.fx", NULL, NULL, flags1, NULL, device, &effect, &errors);
+	
+	D3DX11CompileEffectFromFile(L"standard.fx", NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, flags1, NULL, device, &effect, &errors);
 	
 	printf(static_cast<char *>(errors->GetBufferPointer()));
 	
@@ -37,6 +38,7 @@ void StandardEffect::Init(ID3D11Device * device)
 	perObject->world = effect->GetVariableByName("world")->AsMatrix();
 	perObject->worldInverseTranspose = effect->GetVariableByName("worldInverseTranspose")->AsMatrix();
 	perObject->eyePosW = effect->GetVariableByName("eyePosW")->AsVector();
+	perObject->mat = effect->GetVariableByName("mat");
 
 	perFrame->ambientLight = effect->GetVariableByName("ambientLight")->AsVector();
 }
@@ -67,4 +69,9 @@ void StandardEffect::SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX
 void StandardEffect::SetVector(ID3DX11EffectVectorVariable * targetVec, XMVECTOR * value)
 {
 	targetVec->SetFloatVector(reinterpret_cast<float *>(value));
+}
+
+void StandardEffect::SetVariable(ID3DX11EffectVariable * targetVar, void * value, size_t size)
+{
+	targetVar->SetRawValue(value, 0, size);
 }

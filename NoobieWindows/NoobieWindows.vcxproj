@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -79,6 +79,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)lib\Debug\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -186,9 +187,12 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Behaviour.cpp" />
+    <ClCompile Include="DemoCylinderObject.cpp" />
+    <ClCompile Include="DemoPlaneObject.cpp" />
     <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -201,12 +205,16 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assets.h" />
     <ClInclude Include="Behaviour.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="DemoCylinderObject.h" />
+    <ClInclude Include="DemoPlaneObject.h" />
     <ClInclude Include="Effect.h" />
-    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />

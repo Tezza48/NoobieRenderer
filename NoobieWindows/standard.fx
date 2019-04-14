@@ -1,4 +1,11 @@
-//#include "lightHelper.fx"
+#include "lightHelper.fx"
+
+struct Material
+{
+	float4 diffuse;
+	float4 specular;
+	float4 reflect;
+};
 
 cbuffer perObject
 {
@@ -6,11 +13,17 @@ cbuffer perObject
 	float4x4 world;
 	float4x4 worldInverseTranspose;
 	float3 eyePosW;
+	Material mat;
 };
 
 cbuffer perFrame
 {
 	float4 ambientLight;
+};
+
+cbuffer perLight
+{
+	DirectionalLight dirLight;
 };
 
 struct VertexIn
@@ -59,9 +72,9 @@ float4 PS(VertexOut i) :SV_TARGET
 		float3 diffuse = ndotl * float3(0.7, 0.69, 0.6);
 
 		float3 v = reflect(-lightVec, i.normalW);
-		float specFactor = pow(max(dot(v, toEyeW), 0.0f), 100.0f);
-		col.rgb += diffuse;
-		col.rgb += float3(1.0, 1.0, 1.0) * specFactor;
+		float specFactor = pow(max(dot(v, toEyeW), 0.0f), mat.specular.a);
+		col.rgb += diffuse.rgb * mat.diffuse.rgb;
+		col.rgb += specFactor * mat.specular.rgb;
 	}
 	col.rgb += ambientLight.rgb * ambientLight.a;
 

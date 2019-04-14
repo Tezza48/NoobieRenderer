@@ -34,6 +34,11 @@ NoobieD3D::~NoobieD3D()
 	SafeRelease(device);
 
 	DestroyWindow(windowHandle);
+
+#if DEBUG || _DEBUG
+	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	SafeRelease(debug);
+#endif // DEBUG || _DEBUG
 }
 
 bool NoobieD3D::Init()
@@ -106,11 +111,24 @@ bool NoobieD3D::Init()
 		&device, &featureLevel, &context));
 	sc0->QueryInterface(IID_PPV_ARGS(&swapChain));
 
-	D3D_CALL(device->CheckMultisampleQualityLevels(
-		DXGI_FORMAT_R8G8B8A8_UNORM, 4, &msaa4xQuality));
-	assert(msaa4xQuality > 0);
+	SafeRelease(sc0);
+
+	const char devName[] = "Device";
+	D3D_CALL(device->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(devName) - 1, devName));
+	const char ctxName[] = "Context";
+	D3D_CALL(context->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(ctxName) - 1, ctxName));
+	const char swapChainName[] = "SwapChain";
+	D3D_CALL(swapChain->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(swapChainName) - 1, swapChainName));
+
+
 
 	OnResize();
+
+#if DEBUG || _DEBUG
+	// 
+	HRESULT hr = device->QueryInterface(IID_PPV_ARGS(&debug));
+	if (FAILED(hr)) return false;
+#endif
 
 	return true;
 }
@@ -171,11 +189,15 @@ void NoobieD3D::Run()
 			// Present
 			D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
 
+			SafeRelease(renderTargetView);
 			// Re Bind new backbuffer
 			ID3D11Texture2D * backBuffer;
 			D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
 			D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
-			backBuffer->Release();
+			SafeRelease(backBuffer);
+
+			const char rtvName[] = "rtv";
+			D3D_CALL(renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(rtvName) - 1, rtvName));
 
 			context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
@@ -201,7 +223,10 @@ void NoobieD3D::OnResize()
 	ID3D11Texture2D * backBuffer;
 	D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
 	D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
-	backBuffer->Release();
+	SafeRelease(backBuffer);
+
+	const char rtvName[] = "RTV";
+	D3D_CALL(renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(rtvName) - 1, rtvName));
 
 	D3D11_TEXTURE2D_DESC dsd;
 	dsd.Width = windowWidth;
@@ -219,7 +244,10 @@ void NoobieD3D::OnResize()
 	ID3D11Texture2D * depthStencilBuffer;
 	D3D_CALL(device->CreateTexture2D(&dsd, 0, &depthStencilBuffer));
 	D3D_CALL(device->CreateDepthStencilView(depthStencilBuffer, 0, &depthStencilView));
-	depthStencilBuffer->Release();
+	SafeRelease(depthStencilBuffer);
+
+	const char dsvName[] = "DSV";
+	D3D_CALL(renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(dsvName) - 1, dsvName));
 
 	context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 

@@ -20,6 +20,9 @@ namespace Noobie
 
 	class NoobieD3D
 	{
+#if DEBUG || _DEBUG
+		ID3D11Debug * debug;
+#endif
 	private:
 		static NoobieD3D * instance;
 
