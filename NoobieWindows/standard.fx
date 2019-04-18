@@ -103,7 +103,7 @@ RasterizerState RSDefault
 	FillMode = Solid;
 	CullMode = back;
 	FrontCounterClockwise = false;
-	DepthBias = 100;
+	DepthBias = 0;
 };
 
 RasterizerState RSWireframe

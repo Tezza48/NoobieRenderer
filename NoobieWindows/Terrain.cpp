@@ -18,7 +18,7 @@ void Terrain::GenMesh(float * heightmap)
 {
 	// wrote algorithm in Monogame implementation at https://github.com/Tezza48/Monogame_TerrainGeneration
 	mesh.vertices.resize(size * size);
-	mesh.indices.resize((size - 1)* (size - 1) * 6);// wrote this for monogame terrain gen
+	mesh.indices.resize((size - 1)* (size - 1) * 6);
 	unsigned int quad = 0, lastVert = 0;
 	for (size_t y = 0; y < size; y++)
 	{
@@ -33,8 +33,6 @@ void Terrain::GenMesh(float * heightmap)
 				yf - offset);
 
 			mesh.vertices[y * size + x].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
-
-			//printf("v %f %f %f\n", vertices[y * size + x].position.x, vertices[y * size + x].position.y, vertices[y * size + x].position.z);
 
 			// positional colouring
 			mesh.vertices[y * size + x].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);

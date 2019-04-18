@@ -82,6 +82,8 @@ void NoobieApp::Start()
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
 	view = XMMatrixLookAtLH(eyePos, target, up);
+
+	Assets::LoadGLTF(Assets::ModelEnum::COCKPIT_GLTF);
 }
 
 void NoobieApp::Update(float dt)
