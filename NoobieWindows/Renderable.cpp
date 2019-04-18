@@ -21,3 +21,13 @@ Material & Renderable::GetMat()
 {
 	return mat;
 }
+
+void Renderable::SetIsVisible(bool value)
+{
+	isVisible = value;
+}
+
+bool Renderable::GetIsVisible() const
+{
+	return isVisible;
+}

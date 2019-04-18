@@ -10,6 +10,7 @@ class Renderable: public BaseObject
 {
 private:
 protected:
+	bool isVisible = true;
 	VertexBuffer vb;
 	IndexBuffer ib;
 	Material mat;
@@ -34,4 +35,7 @@ public:
 
 	unsigned int GetNumIndices();
 	Material & GetMat();
+
+	void SetIsVisible(bool value);
+	bool GetIsVisible() const;
 };

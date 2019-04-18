@@ -17,7 +17,10 @@ Input::~Input()
 void Input::Update()
 {
 	lastKBState = currentKBState;
+	std::fill(currentKBState.begin(), currentKBState.end(), false);
+
 	lastMouse = currentMouse;
+	lastMouse = MouseData();
 }
 
 bool Input::GetKey(KB keycode) const

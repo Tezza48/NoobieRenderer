@@ -7,6 +7,7 @@ class BaseObject
 private:
 
 protected:
+	bool doUpdate = true;
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT4 rotation;
 	float scale = 1.0f;
@@ -25,5 +26,8 @@ public:
 
 	const float & GetScale() const;
 	void SetScale(float value);
+
+	void SetDoUpdate(bool value);
+	bool GetDoUpdate() const;
 };
 

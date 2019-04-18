@@ -37,3 +37,13 @@ void BaseObject::SetScale(float value)
 {
 	scale = value;
 }
+
+void BaseObject::SetDoUpdate(bool value)
+{
+	doUpdate = value;
+}
+
+bool BaseObject::GetDoUpdate() const
+{
+	return doUpdate;
+}

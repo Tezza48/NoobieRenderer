@@ -49,23 +49,17 @@ void NoobieApp::Start()
 
 	auto terrain = new Terrain(device, heightmap, 24);
 	scene.push_back(terrain);
-	renderables.push_back(terrain);
 	terrain->GetMat().diffuse = XMFLOAT4(0.2f, 0.8f, 0.1f, 1.0f);
 	terrain->GetMat().specular = XMFLOAT4(0.2f, 0.8f, 0.1f, 1.0f);
 
 	cone = new DemoCylinderObject(device);
 	scene.push_back(cone);
-	updatables.push_back(cone);
-	renderables.push_back(cone);
 
 	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
 	scene.push_back(bunny);
-	renderables.push_back(bunny);
 
 	cockpit = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::COCKPIT_OBJ, 1.0f));
 	scene.push_back(cockpit);
-	renderables.push_back(cockpit);
-	updatables.push_back(cockpit);
 	cockpit->GetMat().diffuse = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	cockpit->GetMat().specular = XMFLOAT4(0.2f, 0.2f, 0.5f, 1000.0f);
 
@@ -104,9 +98,10 @@ void NoobieApp::Update(float dt)
 		proj = XMMatrixPerspectiveFovLH(XM_PI / 2, GetAspectRatio(), 0.1f, 1000.0f);
 	}
 
-	for (const auto obj : updatables)
+	for (const auto obj : scene)
 	{
-		obj->Update(dt, input);
+		if (obj->GetDoUpdate())
+			obj->Update(dt, input);
 	}
 	XMFLOAT3 cpPos;
 	XMStoreFloat3(&cpPos, eyePosW);
@@ -134,7 +129,11 @@ void NoobieApp::Update(float dt)
 	XMStoreFloat4(&quat, rot);
 	cockpit->SetRotation(quat);
 
-
+	if (input.GetKeyDown(input.KB_RETURN))
+	{
+		cockpit->SetIsVisible(!cockpit->GetIsVisible());
+		std::puts("Pressed Return");
+	}
 }
 
 void NoobieApp::Draw(float dt)
@@ -155,32 +154,39 @@ void NoobieApp::Draw(float dt)
 	auto ambientVector = XMLoadFloat4(&ambient);
 	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
 
-	for (auto obj : renderables)
+	for (const auto obj : scene)
 	{
-		auto world = obj->getWorld();
-		XMMATRIX wvp = world * vp;
-		XMMATRIX worldInvTrans;
+		auto renderable = dynamic_cast<Renderable *>(obj);
+		if (renderable)
 		{
-			auto w = world;
-			w.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			if (!renderable->GetIsVisible())
+				continue;
 
-			XMVECTOR det = XMMatrixDeterminant(w);
-			worldInvTrans = XMMatrixTranspose(XMMatrixInverse(&det, w));
-		}
+			auto world = renderable->getWorld();
+			XMMATRIX wvp = world * vp;
+			XMMATRIX worldInvTrans;
+			{
+				auto w = world;
+				w.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 
-		obj->Bind(context);
+				XMVECTOR det = XMMatrixDeterminant(w);
+				worldInvTrans = XMMatrixTranspose(XMMatrixInverse(&det, w));
+			}
 
-		effect.SetMatrix(effect.getPerObject()->worldViewProj, &wvp);
-		effect.SetMatrix(effect.getPerObject()->world, &world);
-		effect.SetMatrix(effect.getPerObject()->worldInverseTranspose, &worldInvTrans);
-		effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
-		effect.SetVariable(effect.getPerObject()->mat, reinterpret_cast<void *>(&obj->GetMat()), sizeof(obj->GetMat()));
+			renderable->Bind(context);
 
-		for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
-		{
-			technique->GetPassByIndex(pass)->Apply(0, context);
+			effect.SetMatrix(effect.getPerObject()->worldViewProj, &wvp);
+			effect.SetMatrix(effect.getPerObject()->world, &world);
+			effect.SetMatrix(effect.getPerObject()->worldInverseTranspose, &worldInvTrans);
+			effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
+			effect.SetVariable(effect.getPerObject()->mat, reinterpret_cast<void *>(&renderable->GetMat()), sizeof(renderable->GetMat()));
 
-			context->DrawIndexed(obj->GetNumIndices(), 0, 0);
+			for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
+			{
+				technique->GetPassByIndex(pass)->Apply(0, context);
+
+				context->DrawIndexed(renderable->GetNumIndices(), 0, 0);
+			}
 		}
 	}
 }

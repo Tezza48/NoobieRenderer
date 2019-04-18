@@ -169,7 +169,6 @@ void NoobieD3D::Run()
 
 			float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
-			input.Update();
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
 
@@ -202,6 +201,7 @@ void NoobieD3D::Run()
 			context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 			hasResized = false;
+			input.Update();
 		}
 	}
 }

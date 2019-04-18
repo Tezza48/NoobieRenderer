@@ -19,9 +19,7 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-vector<BaseObject *> scene; // Master Vector of all objects
-vector<BaseObject *> updatables;
-vector<Renderable *> renderables;
+	vector<BaseObject *> scene; // Master Vector of all objects
 	
 	DemoCylinderObject * cone;
 	Renderable * cockpit;
