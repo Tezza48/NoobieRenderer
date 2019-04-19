@@ -26,6 +26,22 @@ void Input::Update()
 	currentMouse = liveMouse;
 }
 
+void Input::WndProcKeyState(KB keycode, bool isDown)
+{
+	liveKBState.at(keycode) = isDown;
+}
+
+void Input::WndProcMouseMoved(float xPos, float yPos)
+{
+	liveMouse.mouseX = xPos;
+	liveMouse.mouseY = yPos;
+}
+
+void Input::WndProcMouseButton(int button, bool isDown)
+{
+	currentMouse.button[button] = isDown;
+}
+
 bool Input::GetKey(KB keycode) const
 {
 	return currentKBState[keycode];

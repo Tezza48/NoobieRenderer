@@ -6,7 +6,7 @@ Renderable::Renderable(ID3D11Device * device, MeshData mesh) : BaseObject()
 {
 	position = {};
 
-	rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
+	XMStoreFloat4(&rotation, XMQuaternionIdentity());
 	vb.Init(device, mesh.vertices);
 	ib.Init(device, mesh.indices);
 }

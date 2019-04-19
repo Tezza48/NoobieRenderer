@@ -271,7 +271,7 @@ void NoobieD3D::ClearBuffers(const float color[4])
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
-	auto normalize = [](float pos, float size) -> float { return pos / size - 0.5f; };
+	auto normalize = [](float pos, float size) -> float { return (pos * 2 / size) - 1.0; };
 	msg.hwnd = window;
 	msg.message = message;
 	msg.wParam = wparam;
@@ -297,7 +297,7 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	case WM_MOUSEMOVE:
 		input.WndProcMouseMoved(
 			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
-			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), -static_cast<float>(windowHeight)));
+			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), static_cast<float>(windowHeight)));
 		return 0;
 	case WM_LBUTTONDOWN:
 		input.WndProcMouseButton(0, true);

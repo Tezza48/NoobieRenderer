@@ -14,8 +14,6 @@ PlayerSpaceship::~PlayerSpaceship()
 
 void PlayerSpaceship::Update(float dt, const Input & input)
 {
-	// TODO: FPS controls
-
 	if (input.GetKey(Input::KB_W))
 	{
 		position.z += dt;
@@ -41,10 +39,22 @@ void PlayerSpaceship::Update(float dt, const Input & input)
 		position.y -= dt;
 	}
 
-	auto mouseDelta = input.GetMouseDelta();
-	auto newRot = XMLoadFloat4(&rotation) * XMQuaternionRotationRollPitchYaw(-mouseDelta.y, mouseDelta.x, 0.0f);
+	float sense = 10.0f;
 
-	XMStoreFloat4(&rotation, newRot);
+	auto mouse = input.GetMousePosition();
+	//auto newRot = XMQuaternionRotationRollPitchYaw(mouse.y * sense, mouse.x * sense, 0.0f);XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f)
+
+	//auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
+	//auto right = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
+
+	//auto pitch = XMQuaternionRotationAxis(right, mouse.y * sense);
+	//auto yaw = XMQuaternionRotationAxis(up, mouse.x * sense);
+
+	//auto newRot = XMLoadFloat4(&rotation) * (pitch + yaw);
+
+	//XMStoreFloat4(&rotation, newRot);
+
+	printf("\rMouse x: %f, y: %f", mouse.x, mouse.y);
 
 	//position = { sin(angle) * 4.0f, 8.0f, cos(angle) * 4.0f };
 	//XMStoreFloat4(&rotation, XMQuaternionRotationRollPitchYaw(0.0f, angle, 0.0f));

@@ -144,21 +144,11 @@ public:
 
 	void Update();
 
-	inline void WndProcKeyState(KB keycode, bool isDown)
-	{
-		liveKBState.at(keycode) = isDown;
-	}
+	void WndProcKeyState(KB keycode, bool isDown);
 
-	inline void WndProcMouseMoved(float xPos, float yPos)
-	{
-		liveMouse.mouseX = xPos;
-		liveMouse.mouseY = yPos;
-	}
+	void WndProcMouseMoved(float xPos, float yPos);
 
-	inline void WndProcMouseButton(int button, bool isDown)
-	{
-		currentMouse.button[button] = isDown;
-	}
+	void WndProcMouseButton(int button, bool isDown);
 
 	bool GetKey(KB keycode) const;
 	bool GetKeyUp(KB keycode) const;
