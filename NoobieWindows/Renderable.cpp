@@ -1,9 +1,25 @@
 #include "Renderable.h"
 
+using namespace DirectX;
+
 Renderable::Renderable(ID3D11Device * device, MeshData mesh) : BaseObject()
 {
+	position = {};
+
+	rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
 	vb.Init(device, mesh.vertices);
 	ib.Init(device, mesh.indices);
+}
+
+XMMATRIX Renderable::GetWorld() const
+{
+	return XMMatrixTransformation(
+		XMVECTOR(),
+		XMVECTOR(),
+		XMVectorSet(scale, scale, scale, 1.0),
+		XMVECTOR(),
+		XMLoadFloat4(&rotation),
+		XMLoadFloat3(&position));
 }
 
 void Renderable::Bind(ID3D11DeviceContext * context)

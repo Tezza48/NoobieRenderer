@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Behaviour.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DemoCylinderObject.cpp" />
     <ClCompile Include="DemoPlaneObject.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -198,6 +199,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="NoobieD3D.cpp" />
+    <ClCompile Include="PlayerSpaceship.cpp" />
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="ShapeGenerator.cpp" />
     <ClCompile Include="StandardEffect.cpp" />
@@ -207,6 +209,7 @@
   <ItemGroup>
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="DemoCylinderObject.h" />
     <ClInclude Include="DemoPlaneObject.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="MeshData.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="NoobieD3D.h" />
+    <ClInclude Include="PlayerSpaceship.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="ShapeGenerator.h" />
     <ClInclude Include="StandardEffect.h" />

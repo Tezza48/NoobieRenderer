@@ -5,11 +5,13 @@
 #include "DemoCylinderObject.h"
 #include "Assets.h"
 #include "Terrain.h"
+#include "PlayerSpaceship.h"
 
 NoobieApp::NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
 	cone = nullptr;
+	camera = nullptr;
 }
 
 NoobieApp::~NoobieApp()
@@ -30,52 +32,36 @@ void NoobieApp::Start()
 	doVsync = true;
 	enableMsaa = true;
 
-	// Add renderables (objects) to the scene
-	//auto plane = new DemoPlaneObject(device);
-	//scene.push_back(plane);
-	//renderables.push_back(plane);
-	//plane->GetMat().diffuse = XMFLOAT4(0.96f, 0.1f, 0.1f, 1.0f);
-	//plane->GetMat().specular = XMFLOAT4(0.96f, 0.1f, 0.1f, 10.0f);
+	auto mapSize = 48U;
 
-	float heightmap[24 * 24];
+	float * heightmap = new float[mapSize * mapSize];
 
-	for (size_t y = 0; y < 24; y++)
+	for (size_t y = 0; y < mapSize; y++)
 	{
-		for (size_t x = 0; x < 24; x++)
+		for (size_t x = 0; x < mapSize; x++)
 		{
-			heightmap[y * 24 + x] = sin((float)x) + cos((float)y);
+			heightmap[y * mapSize + x] = sin((float)x / mapSize * 24) + cos((float)y / mapSize * 24);
 		}
 	}
 
-	auto terrain = new Terrain(device, heightmap, 24);
+	auto terrain = new Terrain(device, heightmap, 48);
 	scene.push_back(terrain);
 	terrain->GetMat().diffuse = XMFLOAT4(0.2f, 0.8f, 0.1f, 1.0f);
-	terrain->GetMat().specular = XMFLOAT4(0.2f, 0.8f, 0.1f, 1.0f);
-
-	cone = new DemoCylinderObject(device);
-	scene.push_back(cone);
+	float specPower = 0.1f;
+	terrain->GetMat().specular = XMFLOAT4(0.2f * specPower, 0.8f * specPower, 0.1f * specPower, 100.0f);
 
 	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
 	scene.push_back(bunny);
 
-	cockpit = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::COCKPIT_OBJ, 1.0f));
-	scene.push_back(cockpit);
-	cockpit->GetMat().diffuse = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	cockpit->GetMat().specular = XMFLOAT4(0.2f, 0.2f, 0.5f, 1000.0f);
+	camera = new Camera(static_cast<float>(windowWidth) / windowHeight, 3.1416f / 2.0f, 0.01f, 1000.0f);
 
-	//Renderable * cone = new Renderable(
-	//	device, L"cone", ShapeGenerator::GenerateCylinder(0.5f, 1.3f, 4.0f, 32, 1));
-	//cone->position = XMFLOAT3(2.0f, 0.0f, 0.0f);
-	//renderables.push_back(cone);
+	cockpit = new PlayerSpaceship(device, camera);
+	scene.push_back(cockpit);
 
 	effect.Init(device);
 	effect.SetTechnique("Default");
-
-	XMVECTOR eyePos = XMVectorSet(0.0f, 8.0f, -5.0f, 1.0f);
-	XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 	
-	view = XMMatrixLookAtLH(eyePos, target, up);
+	scene.push_back(camera);
 }
 
 void NoobieApp::Update(float dt)
@@ -86,16 +72,10 @@ void NoobieApp::Update(float dt)
 		return;
 	}
 	accTime +=dt;
-	eyePosW = XMVectorSet(sin(accTime * 0.5f) * 8.0f, 5.0f, cos(accTime * 0.5f) * 8.0f, 1.0f);
-	//XMVECTOR target = XMVectorSet(0.0f, 2.0f, 0.0f, 1.0f);
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
 
-	XMVECTOR target = XMLoadFloat3(&cone->GetPosition());
-
-	view = XMMatrixLookAtLH(eyePosW, target, up);
 	if (hasResized)
 	{
-		proj = XMMatrixPerspectiveFovLH(XM_PI / 2, GetAspectRatio(), 0.1f, 1000.0f);
+		camera->SetAspectRatio(GetAspectRatio());
 	}
 
 	for (const auto obj : scene)
@@ -103,31 +83,6 @@ void NoobieApp::Update(float dt)
 		if (obj->GetDoUpdate())
 			obj->Update(dt, input);
 	}
-	XMFLOAT3 cpPos;
-	XMStoreFloat3(&cpPos, eyePosW);
-	cockpit->SetPosition(cpPos);
-
-	XMVECTOR forwardV = XMVector3Normalize(eyePosW - target);
-	XMVECTOR rightV = XMVector3Normalize(XMVector3Cross(up, forwardV));
-	XMVECTOR upV = XMVector3Normalize(XMVector3Cross(forwardV, rightV));
-
-	XMFLOAT3 fwd;
-	XMStoreFloat3(&fwd, forwardV);
-	XMFLOAT3 right;
-	XMStoreFloat3(&right, rightV);
-	XMFLOAT3 upf;
-	XMStoreFloat3(&upf, upV);
-
-	auto look = XMMatrixSet(
-		right.x, right.y, right.z, 0.0f,
-		upf.x, upf.y, upf.z, 0.0f,
-		fwd.x, fwd.y, fwd.z, 0.0f,
-		cpPos.x, cpPos.x, cpPos.x, 1.0);
-
-	auto rot = XMQuaternionRotationMatrix(look);
-	XMFLOAT4 quat;
-	XMStoreFloat4(&quat, rot);
-	cockpit->SetRotation(quat);
 
 	if (input.GetKeyDown(input.KB_RETURN))
 	{
@@ -144,7 +99,7 @@ void NoobieApp::Draw(float dt)
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	effect.Bind(device, context);
 
-	XMMATRIX vp = view * proj;
+	XMMATRIX vp = camera->GetView() * camera->GetProj();
 
 	D3DX11_TECHNIQUE_DESC techDesc;
 
@@ -162,7 +117,7 @@ void NoobieApp::Draw(float dt)
 			if (!renderable->GetIsVisible())
 				continue;
 
-			auto world = renderable->getWorld();
+			auto world = renderable->GetWorld();
 			XMMATRIX wvp = world * vp;
 			XMMATRIX worldInvTrans;
 			{
@@ -178,6 +133,7 @@ void NoobieApp::Draw(float dt)
 			effect.SetMatrix(effect.getPerObject()->worldViewProj, &wvp);
 			effect.SetMatrix(effect.getPerObject()->world, &world);
 			effect.SetMatrix(effect.getPerObject()->worldInverseTranspose, &worldInvTrans);
+			XMVECTOR eyePosW = XMLoadFloat3(&camera->GetPosition());
 			effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
 			effect.SetVariable(effect.getPerObject()->mat, reinterpret_cast<void *>(&renderable->GetMat()), sizeof(renderable->GetMat()));
 

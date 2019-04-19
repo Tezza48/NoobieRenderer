@@ -9,6 +9,7 @@
 #include "ShapeGenerator.h"
 #include "BaseObject.h"
 #include "DemoCylinderObject.h"
+#include "Camera.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -28,8 +29,7 @@ private:
 
 	float accTime = 0;
 
-	XMMATRIX view, proj;
-	XMVECTOR eyePosW;
+	Camera * camera;
 
 public:
 	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);

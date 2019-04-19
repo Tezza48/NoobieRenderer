@@ -1,11 +1,14 @@
 #include "Input.h"
 #include <Windows.h>
+#include <DirectXMath.h>
 
+using namespace DirectX;
 
 Input::Input()
 {
-	lastKBState.resize(MAX_VALUE(char) + 1);
+	liveKBState.resize(MAX_VALUE(char) + 1);
 	currentKBState.resize(MAX_VALUE(char) + 1);
+	lastKBState.resize(MAX_VALUE(char) + 1);
 }
 
 
@@ -17,10 +20,10 @@ Input::~Input()
 void Input::Update()
 {
 	lastKBState = currentKBState;
-	std::fill(currentKBState.begin(), currentKBState.end(), false);
+	currentKBState = liveKBState;
 
 	lastMouse = currentMouse;
-	lastMouse = MouseData();
+	currentMouse = liveMouse;
 }
 
 bool Input::GetKey(KB keycode) const
@@ -38,14 +41,14 @@ bool Input::GetKeyDown(KB keycode) const
 	return currentKBState[keycode] && !lastKBState[keycode];
 }
 
-vector<float> Input::GetMousePosition() const
+XMFLOAT2 Input::GetMousePosition() const
 {
-	return vector<float>{currentMouse.mouseX, currentMouse.mouseY};
+	return { currentMouse.mouseX, currentMouse.mouseY };
 }
 
-vector<float> Input::GetMouseDelta() const
+XMFLOAT2 Input::GetMouseDelta() const
 {
-	return vector<float>{ currentMouse.mouseX - lastMouse.mouseX, currentMouse.mouseY - lastMouse.mouseY };
+	return { currentMouse.mouseX - lastMouse.mouseX, currentMouse.mouseY - lastMouse.mouseY };
 }
 
 bool Input::GetMouseButton(unsigned int button) const
