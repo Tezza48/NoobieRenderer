@@ -167,6 +167,12 @@ void NoobieD3D::Run()
 		}
 		else
 		{
+			input.Update();
+
+			RECT r;
+			GetWindowRect(windowHandle, &r);
+			SetCursorPos(r.left + windowWidth / 2, r.top + windowHeight / 2);
+
 			auto newTime = high_resolution_clock::now();
 			duration<float> frameDuration = newTime - lastTime;
 			lastTime = newTime;
@@ -207,7 +213,6 @@ void NoobieD3D::Run()
 			context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 			hasResized = false;
-			input.Update();
 		}
 	}
 }
@@ -304,9 +309,6 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		input.WndProcMouseMoved(
 			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
 			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), static_cast<float>(windowHeight)));
-		/*RECT r;
-		GetWindowRect(windowHandle, &r);
-		SetCursorPos(r.left + windowWidth / 2, r.top + windowHeight / 2);*/
 		return 0;
 	case WM_LBUTTONDOWN:
 		input.WndProcMouseButton(0, true);
