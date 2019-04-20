@@ -260,5 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-res/
-!/res/**/*
+!**/res/**/*.obj
+
+!/lib/**/*
