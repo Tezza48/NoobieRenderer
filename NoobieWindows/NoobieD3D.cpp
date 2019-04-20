@@ -79,6 +79,12 @@ bool NoobieD3D::Init()
 	ShowWindow(windowHandle, SW_SHOW);
 	UpdateWindow(windowHandle);
 
+	RECT r;
+	GetWindowRect(windowHandle, &r);
+	ClipCursor(&r);
+
+	SetCapture(windowHandle);
+
 	// Init D3D
 	UINT createDeviceFlags = 0;
 #if DEBUG || _DEBUG
@@ -271,7 +277,7 @@ void NoobieD3D::ClearBuffers(const float color[4])
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
-	auto normalize = [](float pos, float size) -> float { return (pos * 2 / size) - 1.0; };
+	auto normalize = [](float pos, float size) -> float { return (pos * 2 / size) - 1.0f; };
 	msg.hwnd = window;
 	msg.message = message;
 	msg.wParam = wparam;
@@ -298,6 +304,9 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 		input.WndProcMouseMoved(
 			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
 			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), static_cast<float>(windowHeight)));
+		/*RECT r;
+		GetWindowRect(windowHandle, &r);
+		SetCursorPos(r.left + windowWidth / 2, r.top + windowHeight / 2);*/
 		return 0;
 	case WM_LBUTTONDOWN:
 		input.WndProcMouseButton(0, true);
@@ -325,7 +334,32 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	return DefWindowProc(window, message, wparam, lparam);
 }
 
+float Noobie::NoobieD3D::GetAspectRatio() const
+{ 
+	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+}
+
+int Noobie::NoobieD3D::GetWindowWidth() const
+{
+	return windowWidth;
+}
+
+int Noobie::NoobieD3D::GetWindowHeight() const
+{
+	return windowHeight;
+}
+
 LRESULT CALLBACK Noobie::MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
 	return NoobieD3D::GetInstance()->WindowProc(window, message, wparam, lparam);
+}
+
+int Noobie::GetWindowWidth()
+{
+	return NoobieD3D::GetInstance()->GetWindowWidth();
+}
+
+int Noobie::GetWindowHeight()
+{
+	return NoobieD3D::GetInstance()->GetWindowHeight();
 }

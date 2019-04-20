@@ -18,6 +18,9 @@ namespace Noobie
 {
 	LRESULT CALLBACK MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam);
 
+	int GetWindowWidth();
+	int GetWindowHeight();
+
 	class NoobieD3D
 	{
 #if DEBUG || _DEBUG
@@ -53,6 +56,16 @@ namespace Noobie
 		Input input;
 
 		bool hasResized = false;;
+	protected:
+		void ClearBuffers(const float color[4]);
+
+		virtual void Start() = 0;
+		virtual void Update(float dt) = 0;
+		virtual void Draw(float dt) = 0;
+		virtual void OnResize();
+
+		void Quit() { isRunning = false; }
+
 	public:
 		NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 		virtual ~NoobieD3D();
@@ -63,15 +76,8 @@ namespace Noobie
 		LRESULT CALLBACK WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam);
 
 		static NoobieD3D * GetInstance() { return instance; };
-		float GetAspectRatio() const { return static_cast<float>(windowWidth) / static_cast<float>(windowHeight); }
-	protected:
-		void ClearBuffers(const float color[4]);
-
-		virtual void Start() = 0;
-		virtual void Update(float dt) = 0;
-		virtual void Draw(float dt) = 0;
-		virtual void OnResize();
-
-		void Quit() { isRunning = false; }
+		float GetAspectRatio() const;
+		int GetWindowWidth() const;
+		int GetWindowHeight() const;
 	};
 }

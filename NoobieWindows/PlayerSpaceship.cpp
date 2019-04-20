@@ -14,50 +14,59 @@ PlayerSpaceship::~PlayerSpaceship()
 
 void PlayerSpaceship::Update(float dt, const Input & input)
 {
+	auto currentRotation = XMLoadFloat4(&rotation);
+	auto right = XMQuaternionMultiply(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), currentRotation);
+	auto forward = XMQuaternionMultiply(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), currentRotation);
+
+	auto newPosition = XMLoadFloat3(&position);
+
+	XMVECTOR moveDelta;
+
+	XMFLOAT2 moveInput = {};
+
 	if (input.GetKey(Input::KB_W))
 	{
-		position.z += dt;
+		moveInput.y++;
 	}
 	if (input.GetKey(Input::KB_S))
 	{
-		position.z -= dt;
+		moveInput.y--;
 	}
 	if (input.GetKey(Input::KB_A))
 	{
-		position.x -= dt;
+		moveInput.x--;
 	}
 	if (input.GetKey(Input::KB_D))
 	{
-		position.x += dt;
+		moveInput.x++;
 	}
-	if (input.GetKey(Input::KB_R))
-	{
-		position.y += dt;
-	}
-	if (input.GetKey(Input::KB_F))
-	{
-		position.y -= dt;
-	}
+	//if (input.GetKey(Input::KB_R))
+	//{
+	//	position.y += dt;
+	//}
+	//if (input.GetKey(Input::KB_F))
+	//{
+	//	position.y -= dt;
+	//}
 
-	float sense = 10.0f;
+	moveDelta = forward * moveInput.y + right * moveInput.x;
+	moveDelta = XMVector3Normalize(moveDelta);
 
-	auto mouse = input.GetMousePosition();
-	//auto newRot = XMQuaternionRotationRollPitchYaw(mouse.y * sense, mouse.x * sense, 0.0f);XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f)
+	newPosition += moveDelta * dt;
 
-	//auto up = XMVectorSet(0.0f, 1.0f, 0.0f, 1.0f);
-	//auto right = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
+	XMStoreFloat3(&position, newPosition);
 
-	//auto pitch = XMQuaternionRotationAxis(right, mouse.y * sense);
-	//auto yaw = XMQuaternionRotationAxis(up, mouse.x * sense);
+	float sense = 1.0f;
 
-	//auto newRot = XMLoadFloat4(&rotation) * (pitch + yaw);
+	auto mouse = input.GetMouseDelta();
+	auto newRot = XMLoadFloat4(&rotation);
 
-	//XMStoreFloat4(&rotation, newRot);
+	newRot = XMQuaternionMultiply(newRot, XMQuaternionRotationAxis(right, mouse.y * sense));
+	newRot = XMQuaternionMultiply(newRot, XMQuaternionRotationAxis(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), mouse.x * sense));
+	
+	XMStoreFloat4(&rotation, newRot);
 
 	printf("\rMouse x: %f, y: %f", mouse.x, mouse.y);
-
-	//position = { sin(angle) * 4.0f, 8.0f, cos(angle) * 4.0f };
-	//XMStoreFloat4(&rotation, XMQuaternionRotationRollPitchYaw(0.0f, angle, 0.0f));
 
 	// Update the camera's position
 	cameraRef->SetPosition(position);
