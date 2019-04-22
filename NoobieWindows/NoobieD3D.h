@@ -8,15 +8,13 @@
 #include <chrono>
 #include <queue>
 #include "Input.h"
-
-using std::wstring;
-using std::unique_ptr;
-
-using namespace std::chrono;
+#include <GLFW/glfw3.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
 
 namespace Noobie
 {
-	LRESULT CALLBACK MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam);
+	void KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
 
 	int GetWindowWidth();
 	int GetWindowHeight();
@@ -30,14 +28,18 @@ namespace Noobie
 		static NoobieD3D * instance;
 
 		bool isRunning;
-		time_point<high_resolution_clock> lastTime;
+		std::chrono::time_point<std::chrono::high_resolution_clock> lastTime;
 	protected:
 		// window information
-		HWND windowHandle = 0;
+		GLFWwindow * window;
+
 		int windowWidth;
 		int windowHeight;
-		wstring windowTitle = L"Noobie";
+
+		std::string windowTitle = "Noobie";
+		
 		bool isWindowed = true;
+
 		MSG msg;
 
 		// D3D information
@@ -67,13 +69,13 @@ namespace Noobie
 		void Quit() { isRunning = false; }
 
 	public:
-		NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
+		NoobieD3D(std::string windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 		virtual ~NoobieD3D();
 	
 		bool Init();
 		void Run();
 
-		LRESULT CALLBACK WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam);
+		void KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
 
 		static NoobieD3D * GetInstance() { return instance; };
 		float GetAspectRatio() const;

@@ -3,7 +3,7 @@
 #include <math.h>
 #include "Assets.h"
 
-NoobieApp::NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
+NoobieApp::NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
 	camera = nullptr;

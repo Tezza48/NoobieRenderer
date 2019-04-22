@@ -2,15 +2,16 @@
 #include <dxgi1_6.h>
 #include "NoobieD3D.h"
 #include <thread>
-#include <windowsx.h>
 #include "Utilities.h"
 #include <string>
 
 using namespace Noobie;
+using std::string;
+using namespace std::chrono;
 
 NoobieD3D * NoobieD3D::instance = nullptr;
 
-NoobieD3D::NoobieD3D(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight)
+NoobieD3D::NoobieD3D(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: windowTitle(windowTitle), windowWidth(windowWidth), windowHeight(windowHeight)
 {
 	if (!instance)
@@ -33,7 +34,7 @@ NoobieD3D::~NoobieD3D()
 	SafeRelease(context);
 	SafeRelease(device);
 
-	DestroyWindow(windowHandle);
+	glfwTerminate();
 
 #if DEBUG || _DEBUG
 	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
@@ -44,40 +45,20 @@ NoobieD3D::~NoobieD3D()
 bool NoobieD3D::Init()
 {
 	// Init Window
-	HMODULE instance = GetModuleHandle(NULL);
-
-	const wchar_t classname[] = L"WindowClass";
-	// create the window
-	WNDCLASS windowClass;
-	windowClass.style = CS_HREDRAW | CS_VREDRAW;
-	windowClass.lpfnWndProc = ::MainWindowProc;// the global one
-	windowClass.cbClsExtra = 0;
-	windowClass.cbWndExtra = 0;
-	windowClass.hInstance = instance;
-	windowClass.hIcon = LoadIcon(instance, IDI_APPLICATION);
-	windowClass.hCursor = LoadCursor(0, IDC_ARROW);
-	windowClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	windowClass.lpszMenuName = 0;
-	windowClass.lpszClassName = classname;
-
-	if (!RegisterClass(&windowClass))
+	if (!glfwInit())
 	{
-		printf("Error: Window failed to register.\n");
 		return false;
 	}
 
-	windowHandle = CreateWindow(classname, windowTitle.c_str(),
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-		windowWidth, windowHeight, 0, 0, instance, 0);
+	window = glfwCreateWindow(windowWidth, windowHeight, windowTitle.c_str(), NULL, NULL);
 
-	if (windowHandle == 0)
+	if (!window)
 	{
-		printf("Error: CreateWindow Failed");
+		glfwTerminate();
 		return false;
 	}
 
-	ShowWindow(windowHandle, SW_SHOW);
-	UpdateWindow(windowHandle);
+	glfwSetKeyCallback(window, Noobie::KeyCallback);
 
 	// Init D3D
 	UINT createDeviceFlags = 0;
@@ -97,7 +78,7 @@ bool NoobieD3D::Init()
 	sd.SampleDesc.Quality = 0;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	sd.BufferCount = 2;
-	sd.OutputWindow = windowHandle;
+	sd.OutputWindow = glfwGetWin32Window(window);
 	sd.Windowed = true;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	sd.Flags = NULL;
@@ -119,8 +100,6 @@ bool NoobieD3D::Init()
 	D3D_CALL(context->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(ctxName) - 1, ctxName));
 	const char swapChainName[] = "SwapChain";
 	D3D_CALL(swapChain->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(swapChainName) - 1, swapChainName));
-
-
 
 	OnResize();
 
@@ -154,56 +133,59 @@ void NoobieD3D::Run()
 	bool done = false;
 	while (isRunning)
 	{
-		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else
-		{
-			input.Update();
+		isRunning = !glfwWindowShouldClose(window);
+		glfwPollEvents();
 
-			auto newTime = high_resolution_clock::now();
-			duration<float> frameDuration = newTime - lastTime;
-			lastTime = newTime;
+		input.Update();
 
-			frameTimeQueue.emplace(frameDuration.count());
+		auto newTime = high_resolution_clock::now();
+		duration<float> frameDuration = newTime - lastTime;
+		lastTime = newTime;
 
-			float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
+		frameTimeQueue.emplace(frameDuration.count());
 
-			Update(frameDuration.count());
-			Draw(frameDuration.count());
+		float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
-			std::wstring title = L"Frame Time : ";
-			title += std::to_wstring(avgFrameTime);
-			title += L"ms\t\t FPS: ";
-			title += std::to_wstring((int)(1.0f / avgFrameTime));
+		Update(frameDuration.count());
+		Draw(frameDuration.count());
 
-			SetWindowText(windowHandle, title.c_str());
+		string title = "Frame Time: ";
+		title += std::to_string(avgFrameTime);
+		title += "ms FPS: ";
+		title += std::to_string(static_cast<int>(1.0f / avgFrameTime));
 
-			DXGI_PRESENT_PARAMETERS pp;
-			pp.DirtyRectsCount = 0;
-			pp.pDirtyRects = NULL;
-			pp.pScrollRect = NULL;
-			pp.pScrollOffset = NULL;
+		glfwSetWindowTitle(window, title.c_str());
+
+		DXGI_PRESENT_PARAMETERS pp;
+		pp.DirtyRectsCount = 0;
+		pp.pDirtyRects = NULL;
+		pp.pScrollRect = NULL;
+		pp.pScrollOffset = NULL;
 			
-			// Present
-			D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
+		// Present
+		D3D_CALL(swapChain->Present(doVsync ? 1 : 0, 0));
 
-			SafeRelease(renderTargetView);
-			// Re Bind new backbuffer
-			ID3D11Texture2D * backBuffer;
-			D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
-			D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
-			SafeRelease(backBuffer);
+		SafeRelease(renderTargetView);
+		// Re Bind new backbuffer
+		ID3D11Texture2D * backBuffer;
+		D3D_CALL(swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer)));
+		D3D_CALL(device->CreateRenderTargetView(backBuffer, 0, &renderTargetView));
+		SafeRelease(backBuffer);
 
-			const char rtvName[] = "rtv";
-			D3D_CALL(renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(rtvName) - 1, rtvName));
+		const char rtvName[] = "rtv";
+		D3D_CALL(renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, sizeof(rtvName) - 1, rtvName));
 
-			context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
-			hasResized = false;
-		}
+		hasResized = false;
+	}
+}
+
+void Noobie::NoobieD3D::KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	if (key != GLFW_KEY_UNKNOWN && action != GLFW_REPEAT)
+	{
+		input.WndProcKeyState((Input::KB)key, action == GLFW_PRESS);
 	}
 }
 
@@ -270,62 +252,6 @@ void NoobieD3D::ClearBuffers(const float color[4])
 	context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
-{
-	auto normalize = [](float pos, float size) -> float { return (pos * 2 / size) - 1.0f; };
-	msg.hwnd = window;
-	msg.message = message;
-	msg.wParam = wparam;
-	msg.lParam = lparam;
-
-	switch (message)
-	{
-	case WM_SIZE:
-		windowWidth = LOWORD(lparam);
-		windowHeight = HIWORD(lparam);
-		if (isRunning)
-		{
-			OnResize();
-		}
-		return 0;
-	case WM_KEYDOWN:
-		if (((1 << 30) & lparam) == 0)
-			input.WndProcKeyState(static_cast<Input::KB>(wparam), true);
-		return 0;
-	case WM_KEYUP:
-		input.WndProcKeyState(static_cast<Input::KB>(wparam), false);
-		return 0;
-	case WM_MOUSEMOVE:
-		input.WndProcMouseMoved(
-			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
-			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), static_cast<float>(windowHeight)));
-		return 0;
-	case WM_LBUTTONDOWN:
-		input.WndProcMouseButton(0, true);
-		return 0;								  
-	case WM_RBUTTONDOWN:
-		input.WndProcMouseButton(1, true);
-		return 0;								  
-	case WM_MBUTTONDOWN:
-		input.WndProcMouseButton(2, true);
-		return 0;								
-	case WM_LBUTTONUP:
-		input.WndProcMouseButton(0, false);
-		return 0;								
-	case WM_RBUTTONUP:
-		input.WndProcMouseButton(1, false);
-		return 0;								 
-	case WM_MBUTTONUP:
-		input.WndProcMouseButton(2, false);
-		return 0;
-	case WM_DESTROY:
-		isRunning = false;
-		PostQuitMessage(0);
-		return 0;
-	}
-	return DefWindowProc(window, message, wparam, lparam);
-}
-
 float Noobie::NoobieD3D::GetAspectRatio() const
 { 
 	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
@@ -341,9 +267,9 @@ int Noobie::NoobieD3D::GetWindowHeight() const
 	return windowHeight;
 }
 
-LRESULT CALLBACK Noobie::MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
+void Noobie::KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
-	return NoobieD3D::GetInstance()->WindowProc(window, message, wparam, lparam);
+	NoobieD3D::GetInstance()->KeyCallback(window, key, scancode, action, mods);
 }
 
 int Noobie::GetWindowWidth()

@@ -27,7 +27,7 @@ private:
 	Camera * camera;
 
 public:
-	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);
+	NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight);
 	~NoobieApp();
 
 private:

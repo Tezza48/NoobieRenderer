@@ -6,9 +6,9 @@ using namespace DirectX;
 
 Input::Input()
 {
-	liveKBState.resize(MAX_VALUE(char) + 1);
-	currentKBState.resize(MAX_VALUE(char) + 1);
-	lastKBState.resize(MAX_VALUE(char) + 1);
+	liveKBState.resize(MAX_GLFW_KEY);
+	currentKBState.resize(MAX_GLFW_KEY);
+	lastKBState.resize(MAX_GLFW_KEY);
 }
 
 
