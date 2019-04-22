@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <DirectXMath.h>
 
 #define MAX_VALUE(x) (1 << sizeof(x) * 8) - 1
 
@@ -130,38 +131,31 @@ public:
 		KB_SIZE_ELEMENT
 	};
 private:
-	vector<bool> lastKBState;
+	vector<bool> liveKBState; // Internally used, updated by window callback
 	vector<bool> currentKBState;
-	MouseData lastMouse;
+	vector<bool> lastKBState;
+
+	MouseData liveMouse;
 	MouseData currentMouse;
+	MouseData lastMouse;
 public:
 	Input();
 	~Input();
 
 	void Update();
 
-	inline void WndProcKeyState(KB keycode, bool isDown)
-	{
-		currentKBState.at(keycode) = isDown;
-	}
+	void WndProcKeyState(KB keycode, bool isDown);
 
-	inline void WndProcMouseMoved(float xPos, float yPos)
-	{
-		currentMouse.mouseX = xPos;
-		currentMouse.mouseY = yPos;
-	}
+	void WndProcMouseMoved(float xPos, float yPos);
 
-	inline void WndProcMouseButton(int button, bool isDown)
-	{
-		currentMouse.button[button] = isDown;
-	}
+	void WndProcMouseButton(int button, bool isDown);
 
 	bool GetKey(KB keycode) const;
 	bool GetKeyUp(KB keycode) const;
 	bool GetKeyDown(KB keycode) const;
 
-	vector<float> GetMousePosition() const;
-	vector<float> GetMouseDelta() const;
+	DirectX::XMFLOAT2 GetMousePosition() const;
+	DirectX::XMFLOAT2 GetMouseDelta() const;
 
 	bool GetMouseButton(unsigned int button) const;
 	bool GetMouseButtonUp(unsigned int button) const;

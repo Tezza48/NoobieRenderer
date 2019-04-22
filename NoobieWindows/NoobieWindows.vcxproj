@@ -189,8 +189,7 @@
   <ItemGroup>
     <ClCompile Include="Assets.cpp" />
     <ClCompile Include="Behaviour.cpp" />
-    <ClCompile Include="DemoCylinderObject.cpp" />
-    <ClCompile Include="DemoPlaneObject.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -207,9 +206,8 @@
   <ItemGroup>
     <ClInclude Include="Assets.h" />
     <ClInclude Include="Behaviour.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="DemoCylinderObject.h" />
-    <ClInclude Include="DemoPlaneObject.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="IndexBuffer.h" />

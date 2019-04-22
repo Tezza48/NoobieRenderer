@@ -161,6 +161,8 @@ void NoobieD3D::Run()
 		}
 		else
 		{
+			input.Update();
+
 			auto newTime = high_resolution_clock::now();
 			duration<float> frameDuration = newTime - lastTime;
 			lastTime = newTime;
@@ -169,7 +171,6 @@ void NoobieD3D::Run()
 
 			float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
-			input.Update();
 			Update(frameDuration.count());
 			Draw(frameDuration.count());
 
@@ -271,7 +272,7 @@ void NoobieD3D::ClearBuffers(const float color[4])
 
 LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
-	auto normalize = [](float pos, float size) -> float { return pos / size - 0.5f; };
+	auto normalize = [](float pos, float size) -> float { return (pos * 2 / size) - 1.0f; };
 	msg.hwnd = window;
 	msg.message = message;
 	msg.wParam = wparam;
@@ -297,7 +298,7 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	case WM_MOUSEMOVE:
 		input.WndProcMouseMoved(
 			normalize(static_cast<float>(GET_X_LPARAM(lparam)), static_cast<float>(windowWidth)),
-			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), -static_cast<float>(windowHeight)));
+			normalize(static_cast<float>(GET_Y_LPARAM(lparam)), static_cast<float>(windowHeight)));
 		return 0;
 	case WM_LBUTTONDOWN:
 		input.WndProcMouseButton(0, true);
@@ -325,7 +326,32 @@ LRESULT CALLBACK NoobieD3D::WindowProc(HWND window, unsigned int message, WPARAM
 	return DefWindowProc(window, message, wparam, lparam);
 }
 
+float Noobie::NoobieD3D::GetAspectRatio() const
+{ 
+	return static_cast<float>(windowWidth) / static_cast<float>(windowHeight);
+}
+
+int Noobie::NoobieD3D::GetWindowWidth() const
+{
+	return windowWidth;
+}
+
+int Noobie::NoobieD3D::GetWindowHeight() const
+{
+	return windowHeight;
+}
+
 LRESULT CALLBACK Noobie::MainWindowProc(HWND window, unsigned int message, WPARAM wparam, LPARAM lparam)
 {
 	return NoobieD3D::GetInstance()->WindowProc(window, message, wparam, lparam);
+}
+
+int Noobie::GetWindowWidth()
+{
+	return NoobieD3D::GetInstance()->GetWindowWidth();
+}
+
+int Noobie::GetWindowHeight()
+{
+	return NoobieD3D::GetInstance()->GetWindowHeight();
 }

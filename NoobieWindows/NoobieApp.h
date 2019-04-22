@@ -6,9 +6,8 @@
 #include "Effect.h"
 #include "StandardEffect.h"
 #include "Renderable.h"
-#include "ShapeGenerator.h"
 #include "BaseObject.h"
-#include "DemoCylinderObject.h"
+#include "Camera.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -19,19 +18,13 @@ class NoobieApp :
 	public NoobieD3D
 {
 private:
-vector<BaseObject *> scene; // Master Vector of all objects
-vector<BaseObject *> updatables;
-vector<Renderable *> renderables;
-	
-	DemoCylinderObject * cone;
-	Renderable * cockpit;
+	vector<BaseObject *> scene;
 
 	StandardEffect effect;
 
 	float accTime = 0;
 
-	XMMATRIX view, proj;
-	XMVECTOR eyePosW;
+	Camera * camera;
 
 public:
 	NoobieApp(wstring windowTitle, unsigned int windowWidth, unsigned int windowHeight);

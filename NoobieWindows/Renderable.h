@@ -10,6 +10,7 @@ class Renderable: public BaseObject
 {
 private:
 protected:
+	bool isVisible = true;
 	VertexBuffer vb;
 	IndexBuffer ib;
 	Material mat;
@@ -20,13 +21,7 @@ protected:
 public:
 	Renderable(ID3D11Device * device, MeshData mesh);
 
-	inline XMMATRIX getWorld() { return XMMatrixTransformation(
-		XMVECTOR(), 
-		XMVECTOR(), 
-		XMVectorSet(scale, scale, scale, 1.0), 
-		XMVECTOR(), 
-		XMLoadFloat4(&rotation), 
-		XMLoadFloat3(&position)); }
+	XMMATRIX GetWorld() const;
 
 	void Bind(ID3D11DeviceContext * context);
 
@@ -34,4 +29,7 @@ public:
 
 	unsigned int GetNumIndices();
 	Material & GetMat();
+
+	void SetIsVisible(bool value);
+	bool GetIsVisible() const;
 };

@@ -1,11 +1,14 @@
 #include "Input.h"
 #include <Windows.h>
+#include <DirectXMath.h>
 
+using namespace DirectX;
 
 Input::Input()
 {
-	lastKBState.resize(MAX_VALUE(char) + 1);
+	liveKBState.resize(MAX_VALUE(char) + 1);
 	currentKBState.resize(MAX_VALUE(char) + 1);
+	lastKBState.resize(MAX_VALUE(char) + 1);
 }
 
 
@@ -17,7 +20,26 @@ Input::~Input()
 void Input::Update()
 {
 	lastKBState = currentKBState;
+	currentKBState = liveKBState;
+
 	lastMouse = currentMouse;
+	currentMouse = liveMouse;
+}
+
+void Input::WndProcKeyState(KB keycode, bool isDown)
+{
+	liveKBState.at(keycode) = isDown;
+}
+
+void Input::WndProcMouseMoved(float xPos, float yPos)
+{
+	liveMouse.mouseX = xPos;
+	liveMouse.mouseY = yPos;
+}
+
+void Input::WndProcMouseButton(int button, bool isDown)
+{
+	currentMouse.button[button] = isDown;
 }
 
 bool Input::GetKey(KB keycode) const
@@ -35,14 +57,14 @@ bool Input::GetKeyDown(KB keycode) const
 	return currentKBState[keycode] && !lastKBState[keycode];
 }
 
-vector<float> Input::GetMousePosition() const
+XMFLOAT2 Input::GetMousePosition() const
 {
-	return vector<float>{currentMouse.mouseX, currentMouse.mouseY};
+	return { currentMouse.mouseX, currentMouse.mouseY };
 }
 
-vector<float> Input::GetMouseDelta() const
+XMFLOAT2 Input::GetMouseDelta() const
 {
-	return vector<float>{ currentMouse.mouseX - lastMouse.mouseX, currentMouse.mouseY - lastMouse.mouseY };
+	return { currentMouse.mouseX - lastMouse.mouseX, currentMouse.mouseY - lastMouse.mouseY };
 }
 
 bool Input::GetMouseButton(unsigned int button) const

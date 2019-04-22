@@ -123,11 +123,11 @@ technique11 Default
 
 		SetRasterizerState(RSDefault);
 	}
-	pass p1
-	{
-		SetVertexShader(CompileShader(vs_5_0, VSWire()));
-		SetPixelShader(CompileShader(ps_5_0, PSWire()));
+	//pass p1
+	//{
+	//	SetVertexShader(CompileShader(vs_5_0, VSWire()));
+	//	SetPixelShader(CompileShader(ps_5_0, PSWire()));
 
-		SetRasterizerState(RSWireframe);
-	}
+	//	SetRasterizerState(RSWireframe);
+	//}
 }
