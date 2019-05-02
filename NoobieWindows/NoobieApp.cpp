@@ -19,13 +19,11 @@ NoobieApp::~NoobieApp()
 			baseObj = nullptr;
 		}
 	}
-	//fxWVP->Release();
 }
 
 void NoobieApp::Start()
 {
 	doVsync = true;
-	enableMsaa = true;
 
 	auto mapSize = 48U;
 
@@ -35,7 +33,7 @@ void NoobieApp::Start()
 	{
 		for (size_t x = 0; x < mapSize; x++)
 		{
-			heightmap[y * mapSize + x] = sin((float)x / mapSize * 24) + cos((float)y / mapSize * 24);
+			heightmap[y * mapSize + x] = sinf((float)x / (float)mapSize * 24) + cosf((float)y / (float)mapSize * 24);
 		}
 	}
 
@@ -52,12 +50,6 @@ void NoobieApp::Start()
 
 void NoobieApp::Update(float dt)
 {
-	if (input.GetKey(Input::KB_ESCAPE))
-	{
-		Quit();
-		return;
-	}
-
 	accTime +=dt;
 
 	if (hasResized)
@@ -65,7 +57,7 @@ void NoobieApp::Update(float dt)
 		camera->SetAspectRatio(GetAspectRatio());
 	}
 
-	camera->SetPosition({ cos(accTime) * 2.0f, 2.0f, sin(accTime) * 2.0f });
+	camera->SetPosition({ static_cast<float>(cos(accTime)) * 2.0f, 2.0f, static_cast<float>(sin(accTime) * 2.0f) });
 	camera->LookAt({ 0.0f, 0.5f, 0.0f });
 
 	for (const auto obj : scene)

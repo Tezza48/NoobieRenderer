@@ -18,7 +18,7 @@ private:
 	bool isProjDirty;
 
 private:
-	Camera() {}
+	Camera() = delete;
 
 public:
 	Camera(float aspectRatio, float fov, float nearPlane, float farPlane);

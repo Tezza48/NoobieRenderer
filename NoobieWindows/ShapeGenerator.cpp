@@ -84,9 +84,9 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 		{
 			// y * width + height
 			mesh.vertices[ring * numSlices + slice] = {
-				XMFLOAT3(sin(deltaAngle * slice) * radius, y, -cos(deltaAngle * slice) * radius), // Offset Later
+				XMFLOAT3(sinf(deltaAngle * slice) * radius, y, -cosf(deltaAngle * slice) * radius), // Offset Later
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-				XMFLOAT3(sin(deltaAngle * slice), 0.0f, -cos(deltaAngle * slice)) // Compute Later
+				XMFLOAT3(sinf(deltaAngle * slice), 0.0f, -cosf(deltaAngle * slice)) // Compute Later
 			};
 
 			if (ring  < numStacks)// no faces from the last edge
@@ -129,7 +129,7 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 	for (uint slice = 0; slice < numSlices; slice++)
 	{
 		mesh.vertices[ringStart + slice] = {
-				XMFLOAT3(sin(deltaAngle * slice) * bottomRadius, 0, -cos(deltaAngle * slice) * bottomRadius), // Offset Later
+				XMFLOAT3(sinf(deltaAngle * slice) * bottomRadius, 0, -cosf(deltaAngle * slice) * bottomRadius), // Offset Later
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				XMFLOAT3(0.0f, -1.0f, 0.0f) // Compute Later
 		};
@@ -163,7 +163,7 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 	for (uint slice = 0; slice < numSlices; slice++)
 	{
 		mesh.vertices[ringStart + slice] = {
-				XMFLOAT3(sin(-deltaAngle * slice) * topRadius, height, -cos(-deltaAngle * slice) * topRadius), // Offset Later
+				XMFLOAT3(sinf(-deltaAngle * slice) * topRadius, height, -cosf(-deltaAngle * slice) * topRadius), // Offset Later
 				XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f),
 				XMFLOAT3(0.0f, 1.0f, 0.0f) // Compute Later
 		};
