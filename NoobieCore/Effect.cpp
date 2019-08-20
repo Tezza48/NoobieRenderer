@@ -20,7 +20,7 @@ void Effect::Init(ID3D11Device * device)
 #if DEBUG || _DEBUG
 	flags1 |= D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 #endif
-	D3DX11CompileEffectFromFile(L"effect.fx", NULL, NULL, flags1, NULL, device, &effect, &errors);
+	D3DX11CompileEffectFromFile(L"effect.cso", NULL, NULL, flags1, NULL, device, &effect, &errors);
 	
 	printf(static_cast<char *>(errors->GetBufferPointer()));
 	

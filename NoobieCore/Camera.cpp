@@ -2,16 +2,14 @@
 
 using namespace DirectX;
 
-Camera::Camera(float aspectRatio, float fov, float nearPlane, float farPlane) :
-	aspectRatio(aspectRatio), fov(fov), nearPlane(nearPlane), farPlane(farPlane)
+Camera::Camera(float aspectRatio, float fov, float nearPlane, float farPlane) : 
+	Renderable(), aspectRatio(aspectRatio), fov(fov), nearPlane(nearPlane), farPlane(farPlane)
 {
+	proj = {};
+
 	isVisible = false;
 	doUpdate = true;
 	isProjDirty = true;
-}
-
-Camera::~Camera()
-{
 }
 
 XMMATRIX Camera::GetView() const

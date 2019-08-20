@@ -1,5 +1,5 @@
 #include "Terrain.h"
-#include "Utilities.h"
+#include "NoobieCore/Utilities.h"
 #include <math.h>
 
 Terrain::~Terrain()
@@ -16,9 +16,8 @@ Terrain::Terrain(ID3D11Device * device, float * heightmap, unsigned int size): s
 
 void Terrain::GenMesh(float * heightmap)
 {
-	// wrote algorithm in Monogame implementation at https://github.com/Tezza48/Monogame_TerrainGeneration
 	mesh.vertices.resize(size * size);
-	mesh.indices.resize((size - 1)* (size - 1) * 6);// wrote this for monogame terrain gen
+	mesh.indices.resize((size - 1)* (size - 1) * 6);
 	unsigned int quad = 0, lastVert = 0;
 	for (size_t y = 0; y < size; y++)
 	{
@@ -34,12 +33,8 @@ void Terrain::GenMesh(float * heightmap)
 
 			mesh.vertices[y * size + x].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 
-			//printf("v %f %f %f\n", vertices[y * size + x].position.x, vertices[y * size + x].position.y, vertices[y * size + x].position.z);
-
-			// positional colouring
 			mesh.vertices[y * size + x].color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
-			// bounds checking
 			if (x < (size - 1) && y < (size - 1))
 			{
 				// indices for triangle 1
@@ -55,6 +50,7 @@ void Terrain::GenMesh(float * heightmap)
 			lastVert++;
 		}
 	}
+
 	// Generate normals for verts not on the edge
 	for (size_t y = 1; y < size - 1; y++)
 	{
@@ -77,10 +73,4 @@ void Terrain::GenMesh(float * heightmap)
 			XMStoreFloat3(&mesh.vertices[y * size + x].normal, XMVector3Normalize(avgNormal));
 		}
 	}
-
-	//for (size_t i = 0; i < indices.size(); i+=3)
-	//{
-	//	printf("f %u %u %u\n", indices[i], indices[i+1], indices[i+2]);
-	//}
-
 }

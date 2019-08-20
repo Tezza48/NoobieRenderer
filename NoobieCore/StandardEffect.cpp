@@ -23,16 +23,16 @@ StandardEffect::~StandardEffect()
 void StandardEffect::Init(ID3D11Device * device)
 {
 	UINT flags1 = 0;
-	ID3DBlob * errors;
+	ID3DBlob * errors = nullptr;
 #if DEBUG || _DEBUG
 	flags1 |= D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 #endif
-	
-	D3DX11CompileEffectFromFile(L"standard.fx", NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, flags1, NULL, device, &effect, &errors);
+	D3D_CALL(D3DX11CompileEffectFromFile(L"standard.fx", NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, flags1, NULL, device, &effect, &errors));
 	
 	printf(static_cast<char *>(errors->GetBufferPointer()));
-	
 	errors->Release();
+
+	
 	currentTechnique = effect->GetTechniqueByName("Default");
 	perObject->worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
 	perObject->world = effect->GetVariableByName("world")->AsMatrix();

@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderable.h"
 #include <DirectXMath.h>
+#include "Input.h"
 
 class Camera :
 	public Renderable
@@ -22,7 +23,6 @@ private:
 
 public:
 	Camera(float aspectRatio, float fov, float nearPlane, float farPlane);
-	~Camera();
 
 	void SetIsVisible() = delete;
 	void SetDoUpdate() = delete;

@@ -70,6 +70,10 @@ bool NoobieD3D::Init()
 
 	glfwSetKeyCallback(window, Input::KeyCallback);
 
+	glfwSetCursorPosCallback(window, Input::CursorPosCallback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	// Init D3D
 	UINT createDeviceFlags = 0;
 #if DEBUG || _DEBUG

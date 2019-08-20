@@ -2,11 +2,13 @@
 #include <DirectXColors.h>
 #include <math.h>
 #include "Assets.h"
+#include "NoobieCore/Renderable.h"
 
 NoobieApp::NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
 	camera = nullptr;
+	angle = 0;
 }
 
 NoobieApp::~NoobieApp()
@@ -25,27 +27,14 @@ void NoobieApp::Start()
 {
 	doVsync = true;
 
-	auto mapSize = 48U;
-
-	float * heightmap = new float[mapSize * mapSize];
-
-	for (size_t y = 0; y < mapSize; y++)
-	{
-		for (size_t x = 0; x < mapSize; x++)
-		{
-			heightmap[y * mapSize + x] = sinf((float)x / (float)mapSize * 24) + cosf((float)y / (float)mapSize * 24);
-		}
-	}
-
-	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
-	scene.push_back(bunny);
-
 	camera = new Camera(static_cast<float>(windowWidth) / windowHeight, 3.1416f / 2.0f, 0.01f, 1000.0f);
+	//scene.push_back(camera);
 
 	effect.Init(device);
 	effect.SetTechnique("Default");
-	
-	scene.push_back(camera);
+
+	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
+	scene.push_back(bunny);
 }
 
 void NoobieApp::Update(float dt)
@@ -57,8 +46,19 @@ void NoobieApp::Update(float dt)
 		camera->SetAspectRatio(GetAspectRatio());
 	}
 
-	camera->SetPosition({ static_cast<float>(cos(accTime)) * 2.0f, 2.0f, static_cast<float>(sin(accTime) * 2.0f) });
+	if (Input::GetKey(GLFW_KEY_Q))
+	{
+		angle -= dt;
+	}
+
+	if (Input::GetKey(GLFW_KEY_E))
+	{
+		angle += dt;
+	}
+
+	camera->SetPosition({ static_cast<float>(cos(angle)) * 2.0f, 2.0f, static_cast<float>(sin(angle) * 2.0f) });
 	camera->LookAt({ 0.0f, 0.5f, 0.0f });
+	camera->Update(dt, input);
 
 	for (const auto obj : scene)
 	{
@@ -70,6 +70,7 @@ void NoobieApp::Update(float dt)
 void NoobieApp::Draw(float dt)
 {
 	XMFLOAT4 ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
+	XMFLOAT4 ambient2 = XMFLOAT4(0.1f, 0.15f, 0.25f, 1.0f);
 	ClearBuffers(&ambient.x);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -83,7 +84,7 @@ void NoobieApp::Draw(float dt)
 	auto technique = effect.GetCurrentTechnique();
 	technique->GetDesc(&techDesc);
 
-	auto ambientVector = XMLoadFloat4(&ambient);
+	auto ambientVector = XMLoadFloat4(&ambient2);
 	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
 
 	for (const auto obj : scene)

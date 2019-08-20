@@ -1,8 +1,8 @@
 #pragma once
-#include <d3d11.h>
-#include "Vertex.h"
 #include <vector>
-#include "Renderable.h"
+#include <d3d11.h>
+#include "NoobieCore/Vertex.h"
+#include "NoobieCore/Renderable.h"
 
 using std::vector;
 

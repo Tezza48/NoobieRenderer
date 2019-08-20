@@ -1,13 +1,12 @@
 #pragma once
-#include "NoobieD3D.h"
+#include "../NoobieCore/NoobieD3D.h"
 #include <d3dx11effect.h>
 #include <DirectXMath.h>
-#include "Utilities.h"
-#include "Effect.h"
-#include "StandardEffect.h"
-#include "Renderable.h"
-#include "BaseObject.h"
-#include "Camera.h"
+#include "NoobieCore/Utilities.h"
+#include "NoobieCore/Effect.h"
+#include "NoobieCore/StandardEffect.h"
+#include "NoobieCore/BaseObject.h"
+#include "NoobieCore/Camera.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -25,6 +24,7 @@ private:
 	float accTime = 0;
 
 	Camera * camera;
+	float angle;
 
 public:
 	NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight);
