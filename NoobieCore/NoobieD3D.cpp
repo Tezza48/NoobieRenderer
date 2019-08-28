@@ -160,7 +160,7 @@ void NoobieD3D::Run()
 
 		float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
-		Update(frameDuration.count());
+		isRunning = Update(frameDuration.count());
 		Draw(frameDuration.count());
 
 		string title = "Frame Time: ";

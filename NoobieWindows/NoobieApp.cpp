@@ -30,6 +30,8 @@ void NoobieApp::Start()
 	camera = new Camera(static_cast<float>(windowWidth) / windowHeight, 3.1416f / 2.0f, 0.01f, 1000.0f);
 	//scene.push_back(camera);
 
+	camera->SetPosition({ 0.0f, 2.0f, 0.0f });
+
 	effect.Init(device);
 	effect.SetTechnique("Default");
 
@@ -37,8 +39,13 @@ void NoobieApp::Start()
 	scene.push_back(bunny);
 }
 
-void NoobieApp::Update(float dt)
+bool NoobieApp::Update(float dt)
 {
+	if (Input::GetKey(GLFW_KEY_ESCAPE))
+	{
+		return false;
+	}
+
 	accTime +=dt;
 
 	if (hasResized)
@@ -46,18 +53,55 @@ void NoobieApp::Update(float dt)
 		camera->SetAspectRatio(GetAspectRatio());
 	}
 
-	if (Input::GetKey(GLFW_KEY_Q))
+	float speed = 2.5f * dt;
+
+	XMFLOAT3 posInput(0, 0, 0);
+	if (Input::GetKey(GLFW_KEY_A))
 	{
-		angle -= dt;
+		posInput.x -= speed;
 	}
 
-	if (Input::GetKey(GLFW_KEY_E))
+	if (Input::GetKey(GLFW_KEY_D))
 	{
-		angle += dt;
+		posInput.x += speed;
 	}
 
-	camera->SetPosition({ static_cast<float>(cos(angle)) * 2.0f, 2.0f, static_cast<float>(sin(angle) * 2.0f) });
-	camera->LookAt({ 0.0f, 0.5f, 0.0f });
+	if (Input::GetKey(GLFW_KEY_S))
+	{
+		posInput.z -= speed;
+	}
+
+	if (Input::GetKey(GLFW_KEY_W))
+	{
+		posInput.z += speed;
+	}
+
+	angle += (Input::GetDeltaMouse().x / windowWidth) * dt * 100.0f;
+	pitch += (Input::GetDeltaMouse().y / windowHeight) * dt * 100.0f;
+
+	pitch = min(max(pitch, -3.1f / 2.0f), 3.1f / 2.0f);
+
+
+	XMFLOAT4 rotFloat4;
+	auto newRot = XMQuaternionRotationRollPitchYaw(pitch, angle, 0.0f);
+	XMStoreFloat4(&rotFloat4, newRot);
+
+	camera->SetRotation(rotFloat4);
+
+	XMVECTOR fwd = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), newRot) * posInput.z;
+	XMVECTOR right = XMVector3Rotate(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), newRot) * posInput.x;
+
+	auto delta = fwd + right;
+
+	auto lastPos = XMLoadFloat3(&camera->GetPosition());
+
+	auto newPos = lastPos + delta;
+
+	XMFLOAT3 newPosf3;
+	XMStoreFloat3(&newPosf3, newPos);
+
+	camera->SetPosition(newPosf3);
+
 	camera->Update(dt, input);
 
 	for (const auto obj : scene)
@@ -65,6 +109,8 @@ void NoobieApp::Update(float dt)
 		if (obj->GetDoUpdate())
 			obj->Update(dt, input);
 	}
+
+	return true;
 }
 
 void NoobieApp::Draw(float dt)

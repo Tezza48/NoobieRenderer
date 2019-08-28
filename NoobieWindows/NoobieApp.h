@@ -25,6 +25,7 @@ private:
 
 	Camera * camera;
 	float angle;
+	float pitch;
 
 public:
 	NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight);
@@ -32,7 +33,7 @@ public:
 
 private:
 	void Start() override;
-	void Update(float dt) override;
+	bool Update(float dt) override;
 	void Draw(float dt) override;
 };
 
