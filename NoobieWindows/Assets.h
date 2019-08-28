@@ -1,5 +1,5 @@
 #pragma once
-#include "MeshData.h"
+#include "NoobieCore/MeshData.h"
 
 namespace Assets
 {

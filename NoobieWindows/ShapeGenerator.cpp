@@ -54,7 +54,7 @@ MeshData ShapeGenerator::GeneratePlane(int width, int height, float scale)
 	return mesh;
 }
 
-MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, float height, uint numSlices, uint numStacks)
+MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, float height, unsigned int numSlices, unsigned int numStacks)
 {
 	MeshData mesh;
 
@@ -76,17 +76,17 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 
 	unsigned int numRings = numStacks + 1;
 
-	for (uint ring = 0; ring < numRings; ring++)
+	for (unsigned int ring = 0; ring < numRings; ring++)
 	{
 		float y = ring * stackHeight;
 		float radius = bottomRadius + ring * deltaRadius;
-		for (uint slice = 0; slice < numSlices; slice++)
+		for (unsigned int slice = 0; slice < numSlices; slice++)
 		{
 			// y * width + height
 			mesh.vertices[ring * numSlices + slice] = {
-				XMFLOAT3(sin(deltaAngle * slice) * radius, y, -cos(deltaAngle * slice) * radius), // Offset Later
+				XMFLOAT3(sinf(deltaAngle * slice) * radius, y, -cosf(deltaAngle * slice) * radius), // Offset Later
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-				XMFLOAT3(sin(deltaAngle * slice), 0.0f, -cos(deltaAngle * slice)) // Compute Later
+				XMFLOAT3(sinf(deltaAngle * slice), 0.0f, -cosf(deltaAngle * slice)) // Compute Later
 			};
 
 			if (ring  < numStacks)// no faces from the last edge
@@ -119,17 +119,17 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 
 	// Bottom Cap
 
-	uint ringStart = numRings * numSlices + 1;// Skip one for the cap
+	unsigned int ringStart = numRings * numSlices + 1;// Skip one for the cap
 	mesh.vertices[ringStart - 1] = {
 		XMFLOAT3(0.0f, 0.0f, 0.0f),
 		XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 
 		XMFLOAT3(0.0f, -1.0f, 0.0f)
 	};
 
-	for (uint slice = 0; slice < numSlices; slice++)
+	for (unsigned int slice = 0; slice < numSlices; slice++)
 	{
 		mesh.vertices[ringStart + slice] = {
-				XMFLOAT3(sin(deltaAngle * slice) * bottomRadius, 0, -cos(deltaAngle * slice) * bottomRadius), // Offset Later
+				XMFLOAT3(sinf(deltaAngle * slice) * bottomRadius, 0, -cosf(deltaAngle * slice) * bottomRadius), // Offset Later
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 				XMFLOAT3(0.0f, -1.0f, 0.0f) // Compute Later
 		};
@@ -160,10 +160,10 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 		XMFLOAT3(0.0f, 1.0f, 0.0f)
 	};
 
-	for (uint slice = 0; slice < numSlices; slice++)
+	for (unsigned int slice = 0; slice < numSlices; slice++)
 	{
 		mesh.vertices[ringStart + slice] = {
-				XMFLOAT3(sin(-deltaAngle * slice) * topRadius, height, -cos(-deltaAngle * slice) * topRadius), // Offset Later
+				XMFLOAT3(sinf(-deltaAngle * slice) * topRadius, height, -cosf(-deltaAngle * slice) * topRadius), // Offset Later
 				XMFLOAT4(1.0, 1.0f, 1.0f, 1.0f),
 				XMFLOAT3(0.0f, 1.0f, 0.0f) // Compute Later
 		};
@@ -183,44 +183,6 @@ MeshData ShapeGenerator::GenerateCylinder(float topRadius, float bottomRadius, f
 				ringStart);
 		}
 	}
-	//// center of cap
-	//int centerIndex = 0;
-
-
-	//// Bottom Cap
-	//for (unsigned int offset = centerIndex + 1; offset < sliceCount + 1; offset++)
-	//{
-	//	Vertex & currentVert = mesh.vertices[offset];
-	//	currentVert.position = XMFLOAT3(sin(deltaAngle * offset) * bottomRadius, 0.0f, cos(deltaAngle * offset) * bottomRadius);
-	//	currentVert.normal = mesh.vertices[centerIndex].normal;
-	//	currentVert.color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//	if (offset == sliceCount) // if it's the last one end at the start of the circle
-	//		mesh.AddTriangle(centerIndex, centerIndex + 1, centerIndex + offset);
-	//	else
-	//		mesh.AddTriangle(centerIndex, centerIndex + offset + 1, centerIndex + offset);
-	//}
-
-	//centerIndex += sliceCount + 1; // Next vert
-	//// Top Cap
-	//mesh.vertices[centerIndex] = {
-	//	XMFLOAT3(0.0f, height, 0.0f), 
-	//	XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), 
-	//	XMFLOAT3(0.0f, 1.0f, 0.0f)
-	//};
-
-	//for (unsigned int offset = 1; offset < sliceCount + 1; offset++)
-	//{
-	//	Vertex & currentVert = mesh.vertices[centerIndex + offset];
-	//	currentVert.position = XMFLOAT3(sin(deltaAngle * offset) * topRadius, 0.0f, cos(deltaAngle * offset) * topRadius);
-	//	currentVert.normal = mesh.vertices[centerIndex].normal;
-	//	currentVert.color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	//	if (offset == sliceCount) // if it's the last one end at the start of the circle
-	//		mesh.AddTriangle(centerIndex, centerIndex + offset, centerIndex + 1);
-	//	else
-	//		mesh.AddTriangle(centerIndex, centerIndex + offset, centerIndex + offset + 1);
-	//}
 
 	return mesh;
 

@@ -2,11 +2,13 @@
 #include <DirectXColors.h>
 #include <math.h>
 #include "Assets.h"
+#include "NoobieCore/Renderable.h"
 
 NoobieApp::NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
 	camera = nullptr;
+	angle = 0;
 }
 
 NoobieApp::~NoobieApp()
@@ -19,43 +21,29 @@ NoobieApp::~NoobieApp()
 			baseObj = nullptr;
 		}
 	}
-	//fxWVP->Release();
 }
 
 void NoobieApp::Start()
 {
 	doVsync = true;
-	enableMsaa = true;
-
-	auto mapSize = 48U;
-
-	float * heightmap = new float[mapSize * mapSize];
-
-	for (size_t y = 0; y < mapSize; y++)
-	{
-		for (size_t x = 0; x < mapSize; x++)
-		{
-			heightmap[y * mapSize + x] = sin((float)x / mapSize * 24) + cos((float)y / mapSize * 24);
-		}
-	}
-
-	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
-	scene.push_back(bunny);
 
 	camera = new Camera(static_cast<float>(windowWidth) / windowHeight, 3.1416f / 2.0f, 0.01f, 1000.0f);
+	//scene.push_back(camera);
+
+	camera->SetPosition({ 0.0f, 2.0f, 0.0f });
 
 	effect.Init(device);
 	effect.SetTechnique("Default");
-	
-	scene.push_back(camera);
+
+	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
+	scene.push_back(bunny);
 }
 
-void NoobieApp::Update(float dt)
+bool NoobieApp::Update(float dt)
 {
-	if (input.GetKey(Input::KB_ESCAPE))
+	if (Input::GetKey(GLFW_KEY_ESCAPE))
 	{
-		Quit();
-		return;
+		return false;
 	}
 
 	accTime +=dt;
@@ -65,19 +53,70 @@ void NoobieApp::Update(float dt)
 		camera->SetAspectRatio(GetAspectRatio());
 	}
 
-	camera->SetPosition({ cos(accTime) * 2.0f, 2.0f, sin(accTime) * 2.0f });
-	camera->LookAt({ 0.0f, 0.5f, 0.0f });
+	float speed = 2.5f * dt;
+
+	XMFLOAT3 posInput(0, 0, 0);
+	if (Input::GetKey(GLFW_KEY_A))
+	{
+		posInput.x -= speed;
+	}
+
+	if (Input::GetKey(GLFW_KEY_D))
+	{
+		posInput.x += speed;
+	}
+
+	if (Input::GetKey(GLFW_KEY_S))
+	{
+		posInput.z -= speed;
+	}
+
+	if (Input::GetKey(GLFW_KEY_W))
+	{
+		posInput.z += speed;
+	}
+
+	angle += (Input::GetDeltaMouse().x / windowWidth) * dt * 100.0f;
+	pitch += (Input::GetDeltaMouse().y / windowHeight) * dt * 100.0f;
+
+	pitch = min(max(pitch, -3.1f / 2.0f), 3.1f / 2.0f);
+
+
+	XMFLOAT4 rotFloat4;
+	auto newRot = XMQuaternionRotationRollPitchYaw(pitch, angle, 0.0f);
+	XMStoreFloat4(&rotFloat4, newRot);
+
+	camera->SetRotation(rotFloat4);
+
+	XMVECTOR fwd = XMVector3Rotate(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), newRot) * posInput.z;
+	XMVECTOR right = XMVector3Rotate(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), newRot) * posInput.x;
+
+	auto delta = fwd + right;
+
+	auto lastPos = XMLoadFloat3(&camera->GetPosition());
+
+	auto newPos = lastPos + delta;
+
+	XMFLOAT3 newPosf3;
+	XMStoreFloat3(&newPosf3, newPos);
+
+	camera->SetPosition(newPosf3);
+
+	camera->Update(dt, input);
 
 	for (const auto obj : scene)
 	{
 		if (obj->GetDoUpdate())
 			obj->Update(dt, input);
 	}
+
+	return true;
 }
 
 void NoobieApp::Draw(float dt)
 {
 	XMFLOAT4 ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
+	XMFLOAT4 ambient2 = XMFLOAT4(0.1f, 0.15f, 0.25f, 1.0f);
 	ClearBuffers(&ambient.x);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -91,7 +130,7 @@ void NoobieApp::Draw(float dt)
 	auto technique = effect.GetCurrentTechnique();
 	technique->GetDesc(&techDesc);
 
-	auto ambientVector = XMLoadFloat4(&ambient);
+	auto ambientVector = XMLoadFloat4(&ambient2);
 	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
 
 	for (const auto obj : scene)

@@ -14,16 +14,26 @@ NoobieD3D * NoobieD3D::instance = nullptr;
 NoobieD3D::NoobieD3D(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: windowTitle(windowTitle), windowWidth(windowWidth), windowHeight(windowHeight)
 {
+#if DEBUG || _DEBUG
+	debug = nullptr;
+#endif
 	if (!instance)
 	{
 		instance = this;
 	}
 
-	depthStencilView = nullptr;
-	renderTargetView = nullptr;
-	swapChain = nullptr;
-	context = nullptr;
+	isRunning = false;
+
+	window = nullptr;
+
+	msg = { 0 };
+
 	device = nullptr;
+	context = nullptr;
+
+	swapChain = nullptr;
+	renderTargetView = nullptr;
+	depthStencilView = nullptr;
 }
 
 NoobieD3D::~NoobieD3D()
@@ -58,7 +68,11 @@ bool NoobieD3D::Init()
 		return false;
 	}
 
-	glfwSetKeyCallback(window, Noobie::KeyCallback);
+	glfwSetKeyCallback(window, Input::KeyCallback);
+
+	glfwSetCursorPosCallback(window, Input::CursorPosCallback);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Init D3D
 	UINT createDeviceFlags = 0;
@@ -146,7 +160,7 @@ void NoobieD3D::Run()
 
 		float avgFrameTime = QueueAverage(frameTimeQueue, 1000);
 
-		Update(frameDuration.count());
+		isRunning = Update(frameDuration.count());
 		Draw(frameDuration.count());
 
 		string title = "Frame Time: ";
@@ -178,14 +192,6 @@ void NoobieD3D::Run()
 		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 		hasResized = false;
-	}
-}
-
-void Noobie::NoobieD3D::KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	if (key != GLFW_KEY_UNKNOWN && action != GLFW_REPEAT)
-	{
-		input.WndProcKeyState((Input::KB)key, action == GLFW_PRESS);
 	}
 }
 
@@ -265,11 +271,6 @@ int Noobie::NoobieD3D::GetWindowWidth() const
 int Noobie::NoobieD3D::GetWindowHeight() const
 {
 	return windowHeight;
-}
-
-void Noobie::KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	NoobieD3D::GetInstance()->KeyCallback(window, key, scancode, action, mods);
 }
 
 int Noobie::GetWindowWidth()
