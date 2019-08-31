@@ -8,7 +8,9 @@ struct MeshData
 {
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
+
 	unsigned int currentTri = 0;
+
 
 	void AddTriangle(int A, int B, int C)
 	{

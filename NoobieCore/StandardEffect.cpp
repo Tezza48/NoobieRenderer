@@ -41,6 +41,7 @@ void StandardEffect::Init(ID3D11Device * device)
 	perObject->mat = effect->GetVariableByName("mat");
 
 	perFrame->ambientLight = effect->GetVariableByName("ambientLight")->AsVector();
+	perFrame->time = effect->GetVariableByName("time");
 }
 
 void StandardEffect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
@@ -50,12 +51,13 @@ void StandardEffect::Bind(ID3D11Device * device, ID3D11DeviceContext * context)
 		D3D11_INPUT_ELEMENT_DESC desc[] = {
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetof(Vertex, color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Vertex, normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Vertex, texcoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 		};
 
 		D3DX11_PASS_DESC passDesc;
 		currentTechnique->GetPassByIndex(0)->GetDesc(&passDesc);
-		device->CreateInputLayout(desc, 3, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &inputLayout);
+		device->CreateInputLayout(desc, 4, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, &inputLayout);
 	}
 
 	context->IASetInputLayout(inputLayout);

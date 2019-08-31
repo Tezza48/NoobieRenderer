@@ -78,8 +78,8 @@ void FlyCamera::Update(float dt)
 	position = newPosf3;
 }
 
-void FlyCamera::Resize(float width, float height)
+void FlyCamera::Resize(int width, int height)
 {
-	this->width = width;
-	this->height = height;
+	this->width = static_cast<float>(width);
+	this->height = static_cast<float>(height);
 }

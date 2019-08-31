@@ -36,9 +36,11 @@ private:
 	struct PerFrame
 	{
 		ID3DX11EffectVectorVariable * ambientLight;
+		ID3DX11EffectVariable * time;
 		~PerFrame()
 		{
 			SafeRelease(ambientLight);
+			SafeRelease(time);
 		}
 	};
 

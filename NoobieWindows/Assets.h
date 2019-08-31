@@ -1,7 +1,7 @@
 #pragma once
 #include "NoobieCore/MeshData.h"
 
-namespace Assets
+namespace Game::Assets
 {
 	namespace ModelEnum
 	{
@@ -9,5 +9,5 @@ namespace Assets
 		inline const char * BUNNY_OBJ = "res/model/bunny.obj";
 	}
 
-	MeshData LoadObj(const char * path, float scale);
+	std::vector<MeshData> LoadObj(const char * path, float scale);
 }

@@ -35,11 +35,15 @@ void NoobieApp::Start()
 	effect.Init(device);
 	effect.SetTechnique("Default");
 
-	auto bunny = new Renderable(device, Assets::LoadObj(Assets::ModelEnum::BUNNY_OBJ, 10.0f));
+	auto bunny = new Renderable(device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
 	scene.push_back(bunny);
 
-	auto groundPlane = new Renderable(device, ShapeGenerator::GeneratePlane(2, 2, 5));
-	scene.push_back(groundPlane);
+	auto caveMeshData = Game::Assets::LoadObj("res/model/fake-sky-cavern.obj", 1.0f);
+
+	for (const auto& data : caveMeshData)
+	{
+		scene.push_back(new Renderable(device, data));
+	}
 }
 
 bool NoobieApp::Update(float dt)
@@ -70,8 +74,10 @@ bool NoobieApp::Update(float dt)
 
 void NoobieApp::Draw(float dt)
 {
+	XMFLOAT4 clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	ClearBuffers(&clearColor.x);
+
 	XMFLOAT4 ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
-	ClearBuffers(&ambient.x);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -86,6 +92,8 @@ void NoobieApp::Draw(float dt)
 
 	auto ambientVector = XMLoadFloat4(&ambient);
 	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
+
+	effect.SetVariable(effect.getPerFrame()->time, &accTime, sizeof(float));
 
 	for (const auto obj : scene)
 	{

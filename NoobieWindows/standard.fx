@@ -19,6 +19,7 @@ cbuffer perObject
 cbuffer perFrame
 {
 	float4 ambientLight;
+	float time;
 };
 
 cbuffer perLight
@@ -31,7 +32,7 @@ struct VertexIn
 	float3 posL : POSITION;
 	float4 color : COLOR;
 	float3 normalL : NORMAL;
-	//float2 tex : TEXCOORD0;
+	float2 tex : TEXCOORD0;
 };
 
 struct VertexOut
@@ -40,16 +41,19 @@ struct VertexOut
 	float4 posW : POSITION;
 	float4 color : COLOR;
 	float3 normalW : NORMAL;
-	//float2 tex : TEXCOORD0;
+	float2 tex : TEXCOORD0;
 };
 
 VertexOut VS(VertexIn i)
 {
+	i.posL += normalize(i.normalL) * (sin(time) + 1) * 0.5;
+
 	VertexOut o;
 	o.posH = mul(float4(i.posL, 1.0), worldViewProj);
 	o.posW = mul(float4(i.posL, 1.0), world);
 	o.color = i.color;
 	o.normalW = mul(i.normalL, (float3x3)worldInverseTranspose);
+	o.tex = i.tex;
 
 	return o;
 }
@@ -76,7 +80,7 @@ float4 PS(VertexOut i) :SV_TARGET
 		col.rgb += diffuse.rgb * mat.diffuse.rgb;
 		col.rgb += specFactor * mat.specular.rgb;
 	}
-	col.rgb += ambientLight.rgb * ambientLight.a;
+	col.rgb += float3(i.tex.xy, 0.0) * ambientLight.rgb * ambientLight.a;
 
 	return col;
 }
@@ -103,7 +107,7 @@ RasterizerState RSDefault
 	FillMode = Solid;
 	CullMode = back;
 	FrontCounterClockwise = false;
-	DepthBias = 100;
+	DepthBias = 0;
 };
 
 RasterizerState RSWireframe

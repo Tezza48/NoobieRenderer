@@ -17,6 +17,6 @@ public:
 
 	void Update(float dt) override;
 
-	void Resize(float width, float height);
+	void Resize(int width, int height);
 };
 

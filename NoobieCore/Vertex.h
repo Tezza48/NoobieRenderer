@@ -8,4 +8,5 @@ struct Vertex
 	XMFLOAT3 position;
 	XMFLOAT4 color;
 	XMFLOAT3 normal;
+	XMFLOAT2 texcoord;
 };
