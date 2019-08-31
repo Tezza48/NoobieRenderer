@@ -30,7 +30,7 @@ public:
 	DirectX::XMMATRIX GetView() const;
 	DirectX::XMMATRIX GetProj() const;
 
-	void Update(float dt, const Input & input) override;
+	virtual void Update(float dt) override;
 
 	void LookAt(XMFLOAT3 position);
 

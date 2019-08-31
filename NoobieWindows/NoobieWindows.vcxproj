@@ -192,6 +192,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Assets.cpp" />
+    <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="ShapeGenerator.cpp" />
@@ -199,16 +200,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets.h" />
+    <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="ShapeGenerator.h" />
     <ClInclude Include="Terrain.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="standard.fx">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </None>
+    <ClInclude Include="vendor\OBJ_Loader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NoobieCore\NoobieCore.vcxproj">

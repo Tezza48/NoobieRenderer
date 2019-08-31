@@ -25,7 +25,7 @@ public:
 
 	void Bind(ID3D11DeviceContext * context);
 
-	void Update(float dt, const Input & input) override {}
+	void Update(float dt) override {}
 
 	unsigned int GetNumIndices();
 	Material & GetMat();

@@ -16,7 +16,7 @@ public:
 	BaseObject();
 	virtual ~BaseObject();
 
-	virtual void Update(float dt, const Input & input) = 0;
+	virtual void Update(float dt) = 0;
 
 	const DirectX::XMFLOAT3 & GetPosition() const;
 	void SetPosition(DirectX::XMFLOAT3 value);

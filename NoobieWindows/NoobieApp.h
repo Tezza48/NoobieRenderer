@@ -6,7 +6,7 @@
 #include "NoobieCore/Effect.h"
 #include "NoobieCore/StandardEffect.h"
 #include "NoobieCore/BaseObject.h"
-#include "NoobieCore/Camera.h"
+#include "FlyCamera.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -23,9 +23,7 @@ private:
 
 	float accTime = 0;
 
-	Camera * camera;
-	float angle;
-	float pitch;
+	FlyCamera * camera;
 
 public:
 	NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight);

@@ -25,7 +25,7 @@ XMMATRIX Camera::GetProj() const
 	return proj;
 }
 
-void Camera::Update(float dt, const Input & input)
+void Camera::Update(float dt)
 {
 	if (isProjDirty)
 	{
