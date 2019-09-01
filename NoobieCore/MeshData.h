@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Vertex.h"
+#include <string>
 
 using std::vector;
 
@@ -9,8 +10,23 @@ struct MeshData
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
 
-	unsigned int currentTri = 0;
+	unsigned int currentTri;
 
+	struct TextureData
+	{
+		unsigned char* data;
+		int w, h, bpp;
+
+		TextureData() : data(nullptr), w(0), h(0), bpp(0) {}
+		TextureData(unsigned char * data, int w, int h, int bpp) : 
+			data(data), w(w), h(h), bpp(bpp) {}
+	};
+
+	std::wstring diffuse;
+	//TextureData specular;
+	//TextureData normal;
+
+	MeshData() : currentTri(0), diffuse(L"") {}
 
 	void AddTriangle(int A, int B, int C)
 	{

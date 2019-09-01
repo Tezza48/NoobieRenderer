@@ -48,6 +48,8 @@ private:
 	ID3DX11EffectTechnique * currentTechnique = NULL;
 	ID3D11InputLayout * inputLayout = NULL;
 
+	ID3DX11EffectShaderResourceVariable* diffuseMap;
+
 	PerObject * perObject;
 	PerFrame * perFrame;
 
@@ -64,6 +66,7 @@ public:
 	ID3DX11EffectTechnique * GetCurrentTechnique() const { return currentTechnique; }
 	PerObject * getPerObject() { return perObject; }
 	PerFrame * getPerFrame() { return perFrame; }
+	ID3DX11EffectShaderResourceVariable* getDiffuseMap() { return diffuseMap;  }
 
 	// Setters
 	void SetMatrix(ID3DX11EffectMatrixVariable * targetMat, XMMATRIX * value);

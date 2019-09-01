@@ -1,5 +1,15 @@
 #include "lightHelper.fx"
 
+Texture2D diffuseMap;
+
+SamplerState defaultSampler
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = WRAP;
+	AddressV = WRAP;
+	AddressW = WRAP;
+};
+
 struct Material
 {
 	float4 diffuse;
@@ -46,7 +56,7 @@ struct VertexOut
 
 VertexOut VS(VertexIn i)
 {
-	i.posL += normalize(i.normalL) * (sin(time) + 1) * 0.5;
+	//i.posL += normalize(i.normalL) * (sin(time) + 1) * 0.5;
 
 	VertexOut o;
 	o.posH = mul(float4(i.posL, 1.0), worldViewProj);
@@ -80,8 +90,9 @@ float4 PS(VertexOut i) :SV_TARGET
 		col.rgb += diffuse.rgb * mat.diffuse.rgb;
 		col.rgb += specFactor * mat.specular.rgb;
 	}
-	col.rgb += float3(i.tex.xy, 0.0) * ambientLight.rgb * ambientLight.a;
+	col.rgb += diffuseMap.Sample(defaultSampler, i.tex).rgb * ambientLight.rgb * ambientLight.a;
 
+	return diffuseMap.Sample(defaultSampler, i.tex);
 	return col;
 }
 
@@ -105,7 +116,7 @@ float4 PSWire(VertexOut i) : SV_TARGET
 RasterizerState RSDefault
 {
 	FillMode = Solid;
-	CullMode = back;
+	CullMode = none;
 	FrontCounterClockwise = false;
 	DepthBias = 0;
 };

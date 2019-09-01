@@ -10,4 +10,6 @@ namespace Game::Assets
 	}
 
 	std::vector<MeshData> LoadObj(const char * path, float scale);
+
+	MeshData::TextureData LoadImg(const char* path);
 }

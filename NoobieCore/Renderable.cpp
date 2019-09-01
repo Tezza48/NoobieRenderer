@@ -1,14 +1,26 @@
 #include "Renderable.h"
+#include <D3DX11tex.h>
 
 using namespace DirectX;
 
-Renderable::Renderable(ID3D11Device * device, MeshData mesh) : BaseObject()
+Renderable::Renderable(const char * name, ID3D11Device * device, MeshData mesh) : BaseObject()
 {
 	position = {};
 
 	XMStoreFloat4(&rotation, XMQuaternionIdentity());
 	vb.Init(device, mesh.vertices);
 	ib.Init(device, mesh.indices);
+
+	diffTexSRV = nullptr;
+
+	if (mesh.diffuse != L"") {
+		D3D_CALL(D3DX11CreateShaderResourceViewFromFile(device, mesh.diffuse.c_str(), 0, 0, &diffTexSRV, 0));
+	}
+}
+
+Renderable::~Renderable()
+{
+	SafeRelease(diffTexSRV);
 }
 
 XMMATRIX Renderable::GetWorld() const
@@ -36,6 +48,11 @@ unsigned int Renderable::GetNumIndices()
 Material & Renderable::GetMat()
 {
 	return mat;
+}
+
+ID3D11ShaderResourceView* Renderable::GetTexture()
+{
+	return diffTexSRV;
 }
 
 void Renderable::SetIsVisible(bool value)

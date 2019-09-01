@@ -15,11 +15,14 @@ protected:
 	IndexBuffer ib;
 	Material mat;
 
+	ID3D11ShaderResourceView* diffTexSRV;
+
 protected:
-	Renderable() {}
+	Renderable() {};
 
 public:
-	Renderable(ID3D11Device * device, MeshData mesh);
+	Renderable(const char * name, ID3D11Device * device, MeshData mesh);
+	~Renderable();
 
 	XMMATRIX GetWorld() const;
 
@@ -29,6 +32,7 @@ public:
 
 	unsigned int GetNumIndices();
 	Material & GetMat();
+	ID3D11ShaderResourceView* GetTexture();
 
 	void SetIsVisible(bool value);
 	bool GetIsVisible() const;

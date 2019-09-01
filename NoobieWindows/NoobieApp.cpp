@@ -35,14 +35,25 @@ void NoobieApp::Start()
 	effect.Init(device);
 	effect.SetTechnique("Default");
 
-	auto bunny = new Renderable(device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
+	auto bunny = new Renderable("bunny", device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
 	scene.push_back(bunny);
+
+	bunny->SetPosition({ 5.0f, 0.0f, 0.0f });
 
 	auto caveMeshData = Game::Assets::LoadObj("res/model/fake-sky-cavern.obj", 1.0f);
 
 	for (const auto& data : caveMeshData)
 	{
-		scene.push_back(new Renderable(device, data));
+		scene.push_back(new Renderable("cave", device, data));
+	}
+
+	auto dreadnoughtData = Game::Assets::LoadObj("res/model/dreadnought.obj", 0.1f);
+
+	for (const auto& data : dreadnoughtData)
+	{
+		auto newRenderable = new Renderable("dreadnought", device, data);
+		scene.push_back(newRenderable);
+		newRenderable->SetPosition({ 0.0f, 2.0f, 0.0f });
 	}
 }
 
@@ -122,6 +133,11 @@ void NoobieApp::Draw(float dt)
 			XMVECTOR eyePosW = XMLoadFloat3(&camera->GetPosition());
 			effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
 			effect.SetVariable(effect.getPerObject()->mat, reinterpret_cast<void *>(&renderable->GetMat()), sizeof(renderable->GetMat()));
+
+			auto tex = renderable->GetTexture();
+			if (tex) {
+				effect.getDiffuseMap()->SetResource(tex);
+			}
 
 			for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
 			{

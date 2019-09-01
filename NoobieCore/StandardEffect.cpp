@@ -3,6 +3,7 @@
 
 StandardEffect::StandardEffect()
 {
+	diffuseMap = nullptr;
 	perObject = new PerObject();
 	perFrame = new PerFrame();
 }
@@ -32,6 +33,7 @@ void StandardEffect::Init(ID3D11Device * device)
 	printf(static_cast<char *>(errors->GetBufferPointer()));
 	errors->Release();
 
+	diffuseMap = effect->GetVariableByName("diffuseMap")->AsShaderResource();
 	
 	currentTechnique = effect->GetTechniqueByName("Default");
 	perObject->worldViewProj = effect->GetVariableByName("worldViewProj")->AsMatrix();
