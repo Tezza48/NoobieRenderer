@@ -35,26 +35,33 @@ void NoobieApp::Start()
 	effect.Init(device);
 	effect.SetTechnique("Default");
 
+	auto planeGeom = Game::Assets::LoadObj("res/model/noisyFloor.obj", 1.0f);
+
+	for (const auto& data : planeGeom)
+	{
+		scene.push_back(new Renderable("floor", device, data));
+	}
+
 	auto bunny = new Renderable("bunny", device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
 	scene.push_back(bunny);
 
-	bunny->SetPosition({ 5.0f, 0.0f, 0.0f });
+	//bunny->SetPosition({ 5.0f, 0.0f, 0.0f });
 
-	auto caveMeshData = Game::Assets::LoadObj("res/model/fake-sky-cavern.obj", 1.0f);
+	//auto caveMeshData = Game::Assets::LoadObj("res/model/fake-sky-cavern.obj", 1.0f);
 
-	for (const auto& data : caveMeshData)
-	{
-		scene.push_back(new Renderable("cave", device, data));
-	}
+	//for (const auto& data : caveMeshData)
+	//{
+	//	scene.push_back(new Renderable("cave", device, data));
+	//}
 
-	auto dreadnoughtData = Game::Assets::LoadObj("res/model/dreadnought.obj", 0.1f);
+	//auto dreadnoughtData = Game::Assets::LoadObj("res/model/dreadnought.obj", 0.1f);
 
-	for (const auto& data : dreadnoughtData)
-	{
-		auto newRenderable = new Renderable("dreadnought", device, data);
-		scene.push_back(newRenderable);
-		newRenderable->SetPosition({ 0.0f, 2.0f, 0.0f });
-	}
+	//for (const auto& data : dreadnoughtData)
+	//{
+	//	auto newRenderable = new Renderable("dreadnought", device, data);
+	//	scene.push_back(newRenderable);
+	//	newRenderable->SetPosition({ 0.0f, 2.0f, 0.0f });
+	//}
 }
 
 bool NoobieApp::Update(float dt)

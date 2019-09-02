@@ -56,7 +56,10 @@ struct VertexOut
 
 VertexOut VS(VertexIn i)
 {
-	//i.posL += normalize(i.normalL) * (sin(time) + 1) * 0.5;
+	float3 eyePosL = mul(eyePosW, (float3x3)worldInverseTranspose);
+	float explodeAmount = max(0, smoothstep(0, 5.0, (length(eyePosL - i.posL) / 2) - 0.5));
+
+	i.posL = lerp(i.posL, i.posL + normalize(i.normalL) * 5.0, explodeAmount);
 
 	VertexOut o;
 	o.posH = mul(float4(i.posL, 1.0), worldViewProj);
@@ -76,7 +79,7 @@ float4 PS(VertexOut i) :SV_TARGET
 
 	float3 toEyeW = normalize(eyePosW - i.posW.xyz);
 
-	float3 lightVec = normalize(-float3(-1.0, -1.0, 1.0));
+	float3 lightVec = normalize(-float3(-1.0, -1.0, -1.0));
 
 	float ndotl = dot(i.normalW, lightVec);
 
@@ -92,7 +95,7 @@ float4 PS(VertexOut i) :SV_TARGET
 	}
 	col.rgb += diffuseMap.Sample(defaultSampler, i.tex).rgb * ambientLight.rgb * ambientLight.a;
 
-	return diffuseMap.Sample(defaultSampler, i.tex);
+	//return diffuseMap.Sample(defaultSampler, i.tex);
 	return col;
 }
 
