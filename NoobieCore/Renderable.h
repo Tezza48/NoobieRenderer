@@ -24,7 +24,7 @@ public:
 	Renderable(const char * name, ID3D11Device * device, MeshData mesh);
 	~Renderable();
 
-	XMMATRIX GetWorld() const;
+	XMFLOAT4X4 GetWorld() const;
 
 	void Bind(ID3D11DeviceContext * context);
 

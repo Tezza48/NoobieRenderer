@@ -23,15 +23,19 @@ Renderable::~Renderable()
 	SafeRelease(diffTexSRV);
 }
 
-XMMATRIX Renderable::GetWorld() const
+XMFLOAT4X4 Renderable::GetWorld() const
 {
-	return XMMatrixTransformation(
+	XMFLOAT4X4 world;
+	
+	XMStoreFloat4x4(&world, XMMatrixTransformation(
 		XMVECTOR(),
 		XMVECTOR(),
 		XMVectorSet(scale, scale, scale, 1.0),
 		XMVECTOR(),
 		XMLoadFloat4(&rotation),
-		XMLoadFloat3(&position));
+		XMLoadFloat3(&position)));
+
+	return world;
 }
 
 void Renderable::Bind(ID3D11DeviceContext * context)

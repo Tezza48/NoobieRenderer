@@ -24,9 +24,6 @@
     <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Effect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BaseObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,15 +51,18 @@
     <ClInclude Include="StandardEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NoobieD3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseObject.cpp">
@@ -83,16 +83,20 @@
     <ClCompile Include="StandardEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="standard.fx">
-      <Filter>Source Files</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Debug\effect.fx">
-      <Filter>Source Files</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Debug\lightHelper.fx">
-      <Filter>Source Files</Filter>
-    </FxCompile>
+    <FxCompile Include="TexColor_PS_P0.hlsl" />
+    <FxCompile Include="TexColor_VS_P0.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="common.hlsli">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="TexColor_Common.hlsli">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

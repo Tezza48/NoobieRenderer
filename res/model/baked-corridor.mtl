@@ -1,0 +1,35 @@
+# Blender MTL File: 'baked-corridor.blend'
+# Material Count: 3
+
+newmtl Material
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd white.png
+
+newmtl Walls
+Ns 323.999994
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.687356 0.584103
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd HallwayBake_Walls.png
+
+newmtl WindowFrames
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd HallwayBake_Windows.png

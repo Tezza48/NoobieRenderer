@@ -4,8 +4,9 @@
 #include "Assets.h"
 #include "NoobieCore/Renderable.h"
 #include "ShapeGenerator.h"
+#include <fstream>
 
-NoobieApp::NoobieApp(string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
+NoobieApp::NoobieApp(std::string windowTitle, unsigned int windowWidth, unsigned int windowHeight)
 	: NoobieD3D(windowTitle, windowWidth, windowHeight)
 {
 	camera = nullptr;
@@ -32,36 +33,28 @@ void NoobieApp::Start()
 
 	camera->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-	effect.Init(device);
-	effect.SetTechnique("Default");
+	shader.Init(device, L"TexColor");
 
-	auto planeGeom = Game::Assets::LoadObj("res/model/noisyFloor.obj", 1.0f);
+	//auto bunny = new Renderable("bunny", device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
+	//scene.push_back(bunny);
 
-	for (const auto& data : planeGeom)
+	//auto planeGeom = Game::Assets::LoadObj("res/model/bunnyOnPlane/bunnyOnPlane.obj", 4.0f);
+
+	//for (const auto& data : planeGeom)
+	//{
+	//	scene.push_back(new Renderable("floor", device, data));
+	//}
+
+	// TODO: Make Meshes have Mesh Parts.
+	auto caveMeshData = Game::Assets::LoadObj("res/model/baked-corridor.obj", 1.0f);
+
+	for (const auto& data : caveMeshData)
 	{
-		scene.push_back(new Renderable("floor", device, data));
+		scene.push_back(new Renderable("cave", device, data));
 	}
 
-	auto bunny = new Renderable("bunny", device, Game::Assets::LoadObj(Game::Assets::ModelEnum::BUNNY_OBJ, 10.0f)[0]);
-	scene.push_back(bunny);
-
-	//bunny->SetPosition({ 5.0f, 0.0f, 0.0f });
-
-	//auto caveMeshData = Game::Assets::LoadObj("res/model/fake-sky-cavern.obj", 1.0f);
-
-	//for (const auto& data : caveMeshData)
-	//{
-	//	scene.push_back(new Renderable("cave", device, data));
-	//}
-
-	//auto dreadnoughtData = Game::Assets::LoadObj("res/model/dreadnought.obj", 0.1f);
-
-	//for (const auto& data : dreadnoughtData)
-	//{
-	//	auto newRenderable = new Renderable("dreadnought", device, data);
-	//	scene.push_back(newRenderable);
-	//	newRenderable->SetPosition({ 0.0f, 2.0f, 0.0f });
-	//}
+	XMStoreFloat4(&light.color, DirectX::Colors::Yellow);
+	light.direction = { 0.0f, -1.0f, 0.0f, 1.0f};
 }
 
 bool NoobieApp::Update(float dt)
@@ -94,24 +87,13 @@ void NoobieApp::Draw(float dt)
 {
 	XMFLOAT4 clearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	ClearBuffers(&clearColor.x);
-
-	XMFLOAT4 ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
 	
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	effect.Bind(device, context);
-
-	XMMATRIX vp = camera->GetView() * camera->GetProj();
-
-	D3DX11_TECHNIQUE_DESC techDesc;
-
-	auto technique = effect.GetCurrentTechnique();
-	technique->GetDesc(&techDesc);
-
-	auto ambientVector = XMLoadFloat4(&ambient);
-	effect.SetVector(effect.getPerFrame()->ambientLight, &ambientVector);
-
-	effect.SetVariable(effect.getPerFrame()->time, &accTime, sizeof(float));
+	auto v = camera->GetView();
+	auto p = camera->GetProj();
+	auto vS = XMLoadFloat4x4(&v);
+	auto pS = XMLoadFloat4x4(&p);
 
 	for (const auto obj : scene)
 	{
@@ -122,36 +104,44 @@ void NoobieApp::Draw(float dt)
 				continue;
 
 			auto world = renderable->GetWorld();
-			XMMATRIX wvp = world * vp;
-			XMMATRIX worldInvTrans;
-			{
-				auto w = world;
-				w.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			auto worldS = XMLoadFloat4x4(&world);
+			XMMATRIX wvpS = worldS * vS * pS;
 
-				XMVECTOR det = XMMatrixDeterminant(w);
-				worldInvTrans = XMMatrixTranspose(XMMatrixInverse(&det, w));
+			auto wvpTransposedS = XMMatrixTranspose(wvpS);
+
+			XMFLOAT4X4 wvpF4x4;
+			XMStoreFloat4x4(&wvpF4x4, wvpTransposedS);
+
+			XMFLOAT4X4 worldInvTrans;
+			XMMATRIX worldInvTransS;
+			{
+				auto wS = worldS;
+				wS.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+				XMVECTOR detS = XMMatrixDeterminant(wS);
+				worldInvTransS = XMMatrixTranspose(XMMatrixInverse(&detS, wS));
 			}
+
+			XMStoreFloat4x4(&worldInvTrans, worldInvTransS);
+
+			shader.UploadCBPerObject(context, 
+				CBPerObject { wvpF4x4, world, worldInvTrans, camera->GetPosition() });
+			shader.UploadCBLightBuffer(context, CBLightBuffer{ light });
 
 			renderable->Bind(context);
 
-			effect.SetMatrix(effect.getPerObject()->worldViewProj, &wvp);
-			effect.SetMatrix(effect.getPerObject()->world, &world);
-			effect.SetMatrix(effect.getPerObject()->worldInverseTranspose, &worldInvTrans);
-			XMVECTOR eyePosW = XMLoadFloat3(&camera->GetPosition());
-			effect.SetVector(effect.getPerObject()->eyePosW, &eyePosW);
-			effect.SetVariable(effect.getPerObject()->mat, reinterpret_cast<void *>(&renderable->GetMat()), sizeof(renderable->GetMat()));
-
 			auto tex = renderable->GetTexture();
+
 			if (tex) {
-				effect.getDiffuseMap()->SetResource(tex);
-			}
-
-			for (unsigned int pass = 0; pass < techDesc.Passes; ++pass)
+				context->PSSetShaderResources(0, 1, &tex);
+			}/*
+			else 
 			{
-				technique->GetPassByIndex(pass)->Apply(0, context);
+				context->PSSetShaderResources(0, 1, nullptr);
+			}*/
 
-				context->DrawIndexed(renderable->GetNumIndices(), 0, 0);
-			}
+			shader.Bind(device, context);
+			context->DrawIndexed(renderable->GetNumIndices(), 0, 0);
 		}
 	}
 }

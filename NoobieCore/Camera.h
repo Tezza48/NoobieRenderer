@@ -14,7 +14,7 @@ private:
 	float nearPlane;
 	float farPlane;
 
-	DirectX::XMMATRIX proj;
+	DirectX::XMFLOAT4X4 proj;
 
 	bool isProjDirty;
 
@@ -27,8 +27,8 @@ public:
 	void SetIsVisible() = delete;
 	void SetDoUpdate() = delete;
 
-	DirectX::XMMATRIX GetView() const;
-	DirectX::XMMATRIX GetProj() const;
+	DirectX::XMFLOAT4X4 GetView() const;
+	DirectX::XMFLOAT4X4 GetProj() const;
 
 	virtual void Update(float dt) override;
 
@@ -36,4 +36,3 @@ public:
 
 	void SetAspectRatio(float value);
 };
-

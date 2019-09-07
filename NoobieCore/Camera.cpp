@@ -12,15 +12,20 @@ Camera::Camera(float aspectRatio, float fov, float nearPlane, float farPlane) :
 	isProjDirty = true;
 }
 
-XMMATRIX Camera::GetView() const
+XMFLOAT4X4 Camera::GetView() const
 {
-	auto world = GetWorld();
-	auto det = XMMatrixDeterminant(world);
+	auto worldS = XMLoadFloat4x4(&GetWorld());
+	auto det = XMMatrixDeterminant(worldS);
 
-	return XMMatrixInverse(&det, world);
+	auto invS = XMMatrixInverse(&det, worldS);
+
+	XMFLOAT4X4 view;
+	XMStoreFloat4x4(&view, invS);
+
+	return view;
 }
 
-XMMATRIX Camera::GetProj() const
+XMFLOAT4X4 Camera::GetProj() const
 {
 	return proj;
 }
@@ -29,7 +34,7 @@ void Camera::Update(float dt)
 {
 	if (isProjDirty)
 	{
-		proj = XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane);
+		XMStoreFloat4x4(&proj, XMMatrixPerspectiveFovLH(fov, aspectRatio, nearPlane, farPlane));
 	}
 }
 
