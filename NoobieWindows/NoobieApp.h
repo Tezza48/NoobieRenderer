@@ -7,6 +7,7 @@
 #include "NoobieCore/StandardEffect.h"
 #include "NoobieCore/BaseObject.h"
 #include "FlyCamera.h"
+#include "Timeline.h"
 
 using namespace Noobie;
 using namespace DirectX;
@@ -16,6 +17,7 @@ class NoobieApp :
 {
 private:
 	vector<BaseObject *> scene;
+	Timeline timeline;
 
 	Shader shader;
 

@@ -7,6 +7,8 @@ class Input
 {
 public:
 private:
+	static std::map<int, bool> liveKeyboard;
+	static std::map<int, bool> currentKeyboard;
 	static std::map<int, bool> lastKeyboard;
 	static float currentMouseX;
 	static float currentMouseY;
@@ -23,5 +25,6 @@ public:
 	static void KeyCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
 	static void CursorPosCallback(GLFWwindow* window, double x, double y);
 	static bool GetKey(int key);
+	static bool GetKeyDown(int key);
 	static DirectX::XMFLOAT2 GetDeltaMouse();
 };

@@ -32,10 +32,6 @@ std::vector<MeshData> Assets::LoadObj(const char * path, float scale)
 			vert.position.y *= scale;
 			vert.position.z *= -scale;
 
-			//vert.normal.x *= -1.0f;
-			//vert.normal.y *= -1.0f;
-			//vert.normal.z *= 1.0f;
-
 			vert.texcoord.y = 1 - vert.texcoord.y;
 
 			mesh.vertices.emplace_back(vert);

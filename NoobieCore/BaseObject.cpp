@@ -1,5 +1,7 @@
 #include "BaseObject.h"
 
+using namespace DirectX;
+
 BaseObject::BaseObject()
 {
 }
@@ -13,7 +15,7 @@ const DirectX::XMFLOAT3 & BaseObject::GetPosition() const
 	return position;
 }
 
-void BaseObject::SetPosition(DirectX::XMFLOAT3 value)
+void BaseObject::SetPosition(XMFLOAT3 value)
 {
 	position = value;
 }
@@ -23,9 +25,10 @@ const DirectX::XMFLOAT4 & BaseObject::GetRotation() const
 	return rotation;
 }
 
-void BaseObject::SetRotation(DirectX::XMFLOAT4 value)
+void BaseObject::SetRotation(XMFLOAT4 value)
 {
-	rotation = value;
+	auto normalizedS = XMQuaternionNormalize(XMLoadFloat4(&value));
+	XMStoreFloat4(&rotation, normalizedS);
 }
 
 const float & BaseObject::GetScale() const

@@ -207,6 +207,7 @@
     <ClCompile Include="NoobieApp.cpp" />
     <ClCompile Include="ShapeGenerator.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Timeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="NoobieApp.h" />
     <ClInclude Include="ShapeGenerator.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Timeline.h" />
     <ClInclude Include="vendor\OBJ_Loader.h" />
     <ClInclude Include="vendor\stb_image.h" />
   </ItemGroup>

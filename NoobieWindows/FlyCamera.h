@@ -4,6 +4,9 @@
 class FlyCamera :
 	public Camera
 {
+public:
+	bool userHasControl;
+
 private:
 	float angle;
 	float pitch;
