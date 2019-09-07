@@ -14,6 +14,12 @@ struct CBPerObject
 	float pad;
 };
 
+struct CBPerFrame
+{
+	float effectAmount;
+	float pad[3];
+};
+
 struct CBLightBuffer
 {
 	DirectionalLight dirLight;
@@ -29,7 +35,7 @@ private:
 	ID3D11SamplerState* samplerState;
 
 	ID3D11Buffer* cbPerObject;
-	ID3D11Buffer* cbLightBuffer;
+	ID3D11Buffer* cbPerFrame;
 
 public:
 
@@ -39,7 +45,7 @@ public:
 	void Init(ID3D11Device* device, std::wstring path);
 	void Bind(ID3D11Device* device, ID3D11DeviceContext* context);
 	void UploadCBPerObject(ID3D11DeviceContext* context, CBPerObject& buffer);
-	void UploadCBLightBuffer(ID3D11DeviceContext* context, CBLightBuffer& buffer);
+	void UploadCBPerFrame(ID3D11DeviceContext* context, CBPerFrame& buffer);
 
 private:
 	void CreateRasterizerState(ID3D11Device * device, D3D11_RASTERIZER_DESC &desc, ID3D11RasterizerState ** state) const;

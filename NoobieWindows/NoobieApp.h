@@ -21,11 +21,11 @@ private:
 
 	Shader shader;
 
-	DirectionalLight light;
-
 	float accTime = 0;
 
 	FlyCamera * camera;
+
+	float effectAmount;
 
 public:
 	NoobieApp(std::string windowTitle, unsigned int windowWidth, unsigned int windowHeight);

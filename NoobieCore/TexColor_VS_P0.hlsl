@@ -7,8 +7,7 @@ VS_OUT main(VS_IN i)
 	float explodeAmount = max(0, smoothstep(0, 5.0, (length(eyePosL - i.posL) / 2) - 0.5));
 
 	//float3 dirToEye = normalize(i.posL - eyePosL);
-	//i.posL = lerp(i.posL, i.posL + normalize(i.normalL) * 5.0, explodeAmount);
-
+	i.posL = lerp(i.posL, i.posL + normalize(i.normalL) * 5.0, gEffectAmount);
 
 	//i.posL = lerp(i.posL, i.posL + dirToEye, explodeAmount);
 	//i.posL += dirToEye * 5.0;

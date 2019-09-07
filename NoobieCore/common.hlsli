@@ -12,7 +12,12 @@ cbuffer perObject : register(b0)
 	float3 gEyePosW;
 };
 
-cbuffer LightBuffer: register(b1)
+cbuffer perFrame : register(b1)
 {
-	DirectionalLight gDirLight;
+	float gEffectAmount;
 }
+
+//cbuffer LightBuffer: register(b1)
+//{
+//	DirectionalLight gDirLight;
+//}

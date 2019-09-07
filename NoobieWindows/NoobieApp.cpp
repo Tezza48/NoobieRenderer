@@ -64,9 +64,11 @@ void NoobieApp::Start()
 		camera->SetRotation({ vars[3], vars[4], vars[5], vars[6] });
 	};
 
+	float delay = 5.0f;
+	
 	timeline.AddAction(
 		{
-			0.0f,
+			0.0f + delay,
 			[=]() {
 				camera->userHasControl = false;
 				camera->SetPosition({ 1.097155f, 2.455842f, -1.033959f });
@@ -83,7 +85,7 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			2.0f,
+			2.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
@@ -96,7 +98,7 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			4.0f,
+			4.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
@@ -108,7 +110,7 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			6.0f,
+			6.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
@@ -120,7 +122,7 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			10.0f,
+			10.0f + delay,
 			[=]() {
 				//camera->userHasControl = true;
 				for (const auto& mesh : coridorScene)
@@ -139,7 +141,7 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			10.0f,
+			10.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
@@ -151,23 +153,29 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			12.0f,
+			//12.0f,
+			12.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
 				timeline.RunTweener(Tweener(2.0f, camTweenFunction, camPos, camRot,
 					{ 0.122512f, 0.361898f, -0.622905f }, { 0.012849f, -0.325504f, 0.004424f, 0.945443f }));
+				timeline.RunTweener(Tweener(6.0f, [=](float* vars)
+					{
+						effectAmount = vars[0];
+						printf("amount: %ff\n", effectAmount);
+					}, { 0.0f }, { 0.2f }));
 			}
 		}
 	);
 
 	timeline.AddAction(
 		{
-			14.0f,
+			14.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
-				timeline.RunTweener(Tweener(2.0f, camTweenFunction, camPos, camRot,
+				timeline.RunTweener(Tweener(4.0f, camTweenFunction, camPos, camRot,
 					{ -0.291910f, 1.603406f, 1.405403f }, { 0.050009f, -0.858826f, 0.502609f, 0.085453f }));
 			}
 		}
@@ -175,18 +183,20 @@ void NoobieApp::Start()
 
 	timeline.AddAction(
 		{
-			16.0f,
+			18.0f + delay,
 			[=]() {
 				auto camPos = camera->GetPosition();
 				auto camRot = camera->GetRotation();
 				timeline.RunTweener(Tweener(2.0f, camTweenFunction, camPos, camRot,
 					{ -2.737120f, 5.589679f, -1.918860f }, { 0.576192f, 0.189950f, -0.139863f, 0.782534f }));
+				timeline.RunTweener(Tweener(10.0f, [=](float* vars)
+					{
+						effectAmount = vars[0];
+						printf("amount: %ff\n", effectAmount);
+					}, { 0.2f }, { 0.8f }));
 			}
 		}
 	);
-
-	XMStoreFloat4(&light.color, DirectX::Colors::Yellow);
-	light.direction = { 0.0f, -1.0f, 0.0f, 1.0f};
 }
 
 bool NoobieApp::Update(float dt)
@@ -267,7 +277,7 @@ void NoobieApp::Draw(float dt)
 
 			shader.UploadCBPerObject(context, 
 				CBPerObject { wvpF4x4, world, worldInvTrans, camera->GetPosition() });
-			shader.UploadCBLightBuffer(context, CBLightBuffer{ light });
+			shader.UploadCBPerFrame(context, CBPerFrame{ effectAmount });
 
 			renderable->Bind(context);
 

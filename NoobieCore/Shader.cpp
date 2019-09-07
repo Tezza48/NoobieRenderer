@@ -19,7 +19,7 @@ Shader::~Shader()
 	SafeRelease(rasterizerState);
 	SafeRelease(samplerState);
 	SafeRelease(cbPerObject);
-	SafeRelease(cbLightBuffer);
+	SafeRelease(cbPerFrame);
 }
 
 void Shader::Init(ID3D11Device* device, std::wstring path)
@@ -68,7 +68,7 @@ void Shader::Init(ID3D11Device* device, std::wstring path)
 	D3D_CALL(device->CreateInputLayout(desc, 4, vsBytecode.data(), vsBytecode.size(), &inputLayout));
 
 	CreateConstantBuffer<CBPerObject>(device, &cbPerObject);
-	CreateConstantBuffer<CBLightBuffer>(device, &cbLightBuffer);
+	CreateConstantBuffer<float[4]>(device, &cbPerFrame);
 
 	auto rasDesc = CD3D11_RASTERIZER_DESC(
 		D3D11_FILL_SOLID, D3D11_CULL_BACK, false, 0, 0, 0, true, false, false, false);
@@ -101,6 +101,7 @@ void Shader::Bind(ID3D11Device* device, ID3D11DeviceContext* context)
 	context->IASetInputLayout(inputLayout);
 	context->VSSetConstantBuffers(0, 1, &cbPerObject);
 	context->PSSetConstantBuffers(0, 1, &cbPerObject);
+	context->VSSetConstantBuffers(1, 1, &cbPerFrame);
 	context->RSSetState(rasterizerState);
 	context->PSSetSamplers(0, 1, &samplerState);
 }
@@ -115,14 +116,14 @@ void Shader::UploadCBPerObject(ID3D11DeviceContext * context, CBPerObject& buffe
 	context->Unmap(cbPerObject, 0);
 }
 
-void Shader::UploadCBLightBuffer(ID3D11DeviceContext* context, CBLightBuffer& buffer)
+void Shader::UploadCBPerFrame(ID3D11DeviceContext* context, CBPerFrame& buffer)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer;
-	D3D_CALL(context->Map(cbLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer));
+	D3D_CALL(context->Map(cbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer));
 
 	memcpy(mappedBuffer.pData, &buffer, sizeof(buffer));
 
-	context->Unmap(cbLightBuffer, 0);
+	context->Unmap(cbPerFrame, 0);
 }
 
 void Shader::CreateRasterizerState(ID3D11Device* device, D3D11_RASTERIZER_DESC& desc, ID3D11RasterizerState** state) const

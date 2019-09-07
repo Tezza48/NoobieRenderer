@@ -88,6 +88,8 @@ void Timeline::Tick(float time)
 			tweenedVars[i] = start + progress * (end - start);
 		}
 		tweener.onUpdate(tweenedVars);
+		delete[] tweenedVars;
+		tweenedVars = nullptr;
 		if (progress > 1.0f) {
 			removeTweeners.push_back(it);
 		}
